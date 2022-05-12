@@ -75,11 +75,11 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /mapproxy/demo
+              path: /mapproxy/service?SERVICE=WMTS&VERSION=1.0.0&REQUEST=getCapabilities
               port: http
           readinessProbe:
             httpGet:
-              path: /mapproxy/demo
+              path: /mapproxy/service?SERVICE=WMTS&VERSION=1.0.0&REQUEST=getCapabilities
               port: http
           resources:
             {{- toYaml .Values.resources.nginx | nindent 12 }}
