@@ -17,7 +17,6 @@ data:
     # OSM example based on https://wiki.openstreetmap.org/wiki/MapProxy
     # -------------------------------
     services:
-      demo:
       wmts:
         restful: true
 

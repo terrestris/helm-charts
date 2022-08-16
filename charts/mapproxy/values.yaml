@@ -88,11 +88,11 @@ affinity: {}
 # optional existing pvc for persistent mapproxy data
 persistence:
   enabled: false
-  # storageClassName: default
+  storageClassName: ""
   accessMode: ReadWriteMany
   size: 20Gi
   useExisting: false
-  # existingPvcName: pvcName
+  existingPvcName: ""
 
 nginx:
   version: latest
@@ -104,3 +104,7 @@ mapproxy:
 customMapproxyConfig:
   enabled: false
   # configMapName: configMapName
+
+probes:
+  livenessUrl: /mapproxy/wmts/1.0.0/WMTSCapabilities.xml
+  readinessUrl: /mapproxy/wmts/1.0.0/WMTSCapabilities.xml
