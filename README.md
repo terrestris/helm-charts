@@ -11,5 +11,5 @@ helm lint charts/*
 ```
 or using `helm/chart-testing`:
 ```shell
-docker run -it --network host --workdir=/data --volume ~/.kube/config:/root/.kube/config:ro --volume $(pwd):/data quay.io/helmpack/chart-testing:v3.5.0 ct lint --chart-dirs . --all
+docker run -it --network host --workdir=/data --volume ~/.kube/config:/root/.kube/config:ro --volume $(pwd):/data quay.io/helmpack/chart-testing:v3.7.1 ct lint --chart-dirs . --all --validate-maintainers=false
 ```
