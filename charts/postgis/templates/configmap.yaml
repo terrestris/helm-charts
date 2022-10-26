@@ -12,3 +12,4 @@ data:
     CREATE DATABASE {{ . }} OWNER {{ $.Values.postgres.customInit.user }};
     {{- end }}
   {{- end }}
+  
