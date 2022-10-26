@@ -54,8 +54,11 @@ spec:
           - name: data
             mountPath: /var/lib/postgresql/data
             subPath: data
+          {{- if .Values.postgres.customInit.enabled }}
           - name: init
             mountPath: /docker-entrypoint-initdb.d/
+          {{- end }}
+      {{- if .Values.postgres.customInit.enabled }}
       volumes:
         - name: init
           configMap:
@@ -63,6 +66,7 @@ spec:
             items:
               - key: init.sql
                 path: init.sql
+      {{- end }}
   volumeClaimTemplates:
     - metadata:
         name: data

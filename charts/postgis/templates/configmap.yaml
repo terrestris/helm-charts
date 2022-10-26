@@ -5,11 +5,8 @@ metadata:
 {{ include "postgis.labels" . | indent 4 }}
   name: {{ include "postgis.fullname" . }}
 data:
-  {{- if .Values.postgres.customInit.enabled }}
   init.sql: |-
     CREATE ROLE {{ .Values.postgres.customInit.user }} WITH SUPERUSER LOGIN PASSWORD '{{ .Values.postgres.customInit.password }}';
     {{- range .Values.postgres.customInit.databases }}
     CREATE DATABASE {{ . }} OWNER {{ $.Values.postgres.customInit.user }};
     {{- end }}
-  {{- end }}
-  
