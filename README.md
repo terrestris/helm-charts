@@ -1,6 +1,6 @@
 # terrestris Helm Charts
 
-The helm charts of terrestris...
+The helm charts of terrestris. The repository can be found [here](https://terrestris.github.io/helm-charts/).
 
 ## Prerequisites
 * Helm (package manager for Kubernetes), see also [here](https://helm.sh/)
