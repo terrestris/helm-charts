@@ -2,6 +2,17 @@ apiVersion: v1
 entries:
   mapproxy:
   - apiVersion: v2
+    appVersion: v1.15.2
+    created: "2022-10-27T15:53:36.119787525Z"
+    description: A Helm chart for Kubernetes
+    digest: fe50ce4cf1a2c1034e5aa04204cf70146d108988862716fb22bbed10c9a42cc6
+    icon: https://mapproxy.org/docs/nightly/_static/logo.png
+    name: mapproxy
+    type: application
+    urls:
+    - https://github.com/terrestris/helm-charts/releases/download/mapproxy-1.0.2/mapproxy-1.0.2.tgz
+    version: 1.0.2
+  - apiVersion: v2
     appVersion: 1.15.1
     created: "2022-10-27T06:57:00.124667372Z"
     description: A Helm chart for Kubernetes
@@ -15,6 +26,16 @@ entries:
   postgis:
   - apiVersion: v1
     appVersion: 11-3.0
+    created: "2022-10-27T15:53:36.253895126Z"
+    description: PostGIS Helm chart
+    digest: f0031c37763140ff0afeb45828be4362208d9c3b54befa437d1357067e05d11c
+    icon: https://postgis.net/logos/postgis-logo.png
+    name: postgis
+    urls:
+    - https://github.com/terrestris/helm-charts/releases/download/postgis-0.1.4/postgis-0.1.4.tgz
+    version: 0.1.4
+  - apiVersion: v1
+    appVersion: 11-3.0
     created: "2022-10-27T06:57:00.435043849Z"
     description: PostGIS Helm chart
     digest: 012a25bc6ea74a44a09dd9bbbba5fe9ea688e00328cda2dc9b1d4f328ecf4d17
@@ -23,4 +44,4 @@ entries:
     urls:
     - https://github.com/terrestris/helm-charts/releases/download/postgis-0.1.3/postgis-0.1.3.tgz
     version: 0.1.3
-generated: "2022-10-27T06:57:00.435056449Z"
+generated: "2022-10-27T15:53:36.253905226Z"
