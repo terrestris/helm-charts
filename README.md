@@ -6,6 +6,10 @@ The helm charts of terrestris...
 * Helm (package manager for Kubernetes), see also [here](https://helm.sh/)
 ## Lint charts
 In order to lint charts locally, simply run:
-```bash
+```shell
 helm lint charts/*
+```
+or using `helm/chart-testing`:
+```shell
+docker run -it --network host --workdir=/data --volume ~/.kube/config:/root/.kube/config:ro --volume $(pwd):/data quay.io/helmpack/chart-testing:v3.7.1 ct lint --chart-dirs . --all --validate-maintainers=false
 ```
