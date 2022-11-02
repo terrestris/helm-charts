@@ -1,0 +1,39 @@
+replicaCount: 1
+
+logs:
+  enabled: true
+
+image:
+  repository: camptocamp/mapfish_print
+  tag: 3.29.3
+  pullPolicy: IfNotPresent
+  pullSecret: regcred
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: false
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,X-XSRF-TOKEN"
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 2Gi
+  requests:
+    cpu: 100m
+    memory: 2Gi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
