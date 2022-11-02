@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "geoserver.fullname" . }}
+  labels:
+{{ include "geoserver.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "geoserver.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  serviceName: {{ include "geoserver.fullname" . }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "geoserver.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      initContainers:
+        - name: download-data
+          image: ubuntu
+          command: ["/bin/sh","/mnt/init-data.sh"]
+          volumeMounts:
+            - name: temp
+              mountPath: /mnt/download
+            - name: init-configmap
+              mountPath: /mnt/
+            - name: datadir
+              mountPath: {{ .Values.storage.datadir }}
+            - name: geodatadir
+              mountPath: {{ .Values.storage.geodatadir }} 
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: STABLE_EXTENSIONS
+              value: {{ .Values.environment.stableExtensions }}
+            - name: EXTRA_JAVA_OPTS
+              value: {{ .Values.environment.javaOptions }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: datadir
+              mountPath: {{ .Values.storage.datadir }}
+            - name: geodatadir
+              mountPath: {{ .Values.storage.geodatadir }} 
+            - name: actiniagrassdb
+              mountPath: {{ .Values.storage.actiniagrassdb }}
+            - name: actiniauserdata
+              mountPath: {{ .Values.storage.actiniauserdata }}
+      volumes:
+        - name: init-configmap
+          configMap:
+            name: {{ include "geoserver.fullname" . }}
+            items:
+              - key: init-data.sh
+                path: init-data.sh
+        - name: temp
+          emptyDir: {}
+        - name: actiniagrassdb
+        - name: actiniauserdata
+        - name: datadir
+        - name: geodatadir
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: {{ .Values.persistence.size | quote }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

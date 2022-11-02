@@ -1,0 +1,46 @@
+replicaCount: 1
+
+image:
+  repository: terrestris/geoserver
+  tag: 2.20.2
+  pullPolicy: IfNotPresent
+
+environment:
+  stableExtensions: geofence-server,importer,sec-keycloak
+  # replace example.com with your host
+  javaOptions: -Xms1g -Xmx2g -DGEOSERVER_CSRF_WHITELIST=localhost,example.com
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: false
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+
+resources:
+  limits:
+    cpu: 2500m
+    memory: 8Gi
+  requests:
+    cpu: 500m
+    memory: 8Gi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+storage:
+  datadir: /opt/geoserver_data
+  initDataUrl: https://example.com/geoserver_data.tgz
+
+persistence:
+  size: 8Gi
