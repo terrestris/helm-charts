@@ -6,9 +6,7 @@ metadata:
 {{ include "geoserver.labels" . | indent 4 }}
 data:
   init-data.sh: |-
-    #!/bin/bash
-    apt-get update -qq
-    apt-get install -y -qq wget
+    #!/bin/sh
     echo "check if geoserver_data initialized"
     FILE=/opt/geoserver_data/.init
     if [ -z "{{ .Values.storage.initDataUrl }}" ]; then

@@ -22,8 +22,9 @@ spec:
         {{- toYaml . | nindent 8 }}
     {{- end }}
       initContainers:
+        {{- with .Values.storage.initDataUrl }}
         - name: download-data
-          image: ubuntu
+          image: alpine
           command: ["/bin/sh","/mnt/init-data.sh"]
           volumeMounts:
             - name: temp
@@ -32,6 +33,7 @@ spec:
               mountPath: /mnt/
             - name: datadir
               mountPath: {{ .Values.storage.datadir }}
+        {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -41,6 +43,13 @@ spec:
               value: {{ .Values.environment.stableExtensions }}
             - name: EXTRA_JAVA_OPTS
               value: {{ .Values.environment.javaOptions }}
+            {{- with .Values.extraEnv }}
+            {{- tpl . $ | nindent 12 }}
+            {{- end }}
+          envFrom:
+            {{- with .Values.extraEnvFrom }}
+            {{- tpl . $ | nindent 12 }}
+            {{- end }}
           ports:
             - name: http
               containerPort: 8080
@@ -58,18 +67,14 @@ spec:
                   value: image/png
             failureThreshold: 1
             periodSeconds: 60
-          startupProbe:
-            httpGet:
-              path: {{ .Values.probes.startupUrl }}
-              port: http
-            failureThreshold: 30
-            periodSeconds: 15
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
             - name: datadir
               mountPath: {{ .Values.storage.datadir }}
       volumes:
+        - name: temp
+          emptyDir: {}
         - name: init-configmap
           configMap:
             name: {{ include "geoserver.fullname" . }}
@@ -79,7 +84,7 @@ spec:
         {{- if and .Values.persistence.enabled (not .Values.persistence.useExisting) }}
         - name: datadir
           persistentVolumeClaim:
-            claimName: {{ include "mapproxy.fullname" . }}
+            claimName: {{ include "geoserver.fullname" . }}
         {{- else if and .Values.persistence.useExisting (.Values.persistence.existingPvcName) }}
         - name: datadir
           persistentVolumeClaim:
