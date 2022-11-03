@@ -2,13 +2,8 @@ replicaCount: 1
 
 image:
   repository: terrestris/geoserver
-  tag: 2.20.2
+  tag: 2.21.2
   pullPolicy: IfNotPresent
-
-environment:
-  stableExtensions: geofence-server,importer,sec-keycloak
-  # replace example.com with your host
-  javaOptions: -Xms1g -Xmx2g -DGEOSERVER_CSRF_WHITELIST=localhost,example.com
 
 imagePullSecrets: []
 nameOverride: ""
@@ -22,7 +17,16 @@ ingress:
   enabled: false
   annotations:
     kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+    cert-manager.io/cluster-issuer: letsencrypt
     nginx.ingress.kubernetes.io/enable-cors: "true"
+  hosts:
+    - host: geoserver.example.com
+      paths: [ "/" ]
+  tls:
+    - secretName: geoserver-secret
+      hosts:
+        - geoserver.example.com
 
 resources:
   limits:
@@ -38,9 +42,26 @@ tolerations: []
 
 affinity: {}
 
+environment:
+  stableExtensions: geofence-server,importer,sec-keycloak
+  # replace example.com with your host
+  javaOptions: -Xms1g -Xmx2g -DGEOSERVER_CSRF_WHITELIST=localhost,example.com
+
 storage:
   datadir: /opt/geoserver_data
-  initDataUrl: https://example.com/geoserver_data.tgz
+#   initDataUrl: https://files.example.com/geoserver_data.tgz
 
+# optional existing pvc for persistent geoserver data
 persistence:
+  enabled: false
+  useExisting: false
+  existingPvcName: ""
+  storageClassName: ""
+  accessMode: ReadWriteOnce
   size: 8Gi
+
+probes:
+  # liveness url should be for example a GetMap request to a layer
+  livenessUrl: /geoserver/ows?request=getCapabilities&service=WMS
+  readinessUrl: /geoserver/ows?request=getCapabilities&service=WMS
+  startupUrl: /geoserver/ows?request=getCapabilities&service=WMS

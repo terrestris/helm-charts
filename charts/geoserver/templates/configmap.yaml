@@ -11,6 +11,10 @@ data:
     apt-get install -y -qq wget
     echo "check if geoserver_data initialized"
     FILE=/opt/geoserver_data/.init
+    if [ -z "{{ .Values.storage.initDataUrl }}" ]; then
+      echo "No download link specified."
+      exit 0
+    fi
     if [ -f "$FILE" ]; then
       echo "download geoserver_data already initialized"
     else

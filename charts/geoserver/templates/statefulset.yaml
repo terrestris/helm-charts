@@ -32,8 +32,6 @@ spec:
               mountPath: /mnt/
             - name: datadir
               mountPath: {{ .Values.storage.datadir }}
-            - name: geodatadir
-              mountPath: {{ .Values.storage.geodatadir }} 
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -47,17 +45,30 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.probes.readinessUrl }}
+              port: http
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.probes.livenessUrl }}
+              port: http
+              httpHeaders:
+                - name: Accept
+                  value: image/png
+            failureThreshold: 1
+            periodSeconds: 60
+          startupProbe:
+            httpGet:
+              path: {{ .Values.probes.startupUrl }}
+              port: http
+            failureThreshold: 30
+            periodSeconds: 15
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
             - name: datadir
               mountPath: {{ .Values.storage.datadir }}
-            - name: geodatadir
-              mountPath: {{ .Values.storage.geodatadir }} 
-            - name: actiniagrassdb
-              mountPath: {{ .Values.storage.actiniagrassdb }}
-            - name: actiniauserdata
-              mountPath: {{ .Values.storage.actiniauserdata }}
       volumes:
         - name: init-configmap
           configMap:
@@ -65,30 +76,15 @@ spec:
             items:
               - key: init-data.sh
                 path: init-data.sh
-        - name: temp
-          emptyDir: {}
-        - name: actiniagrassdb
-        - name: actiniauserdata
+        {{- if and .Values.persistence.enabled (not .Values.persistence.useExisting) }}
         - name: datadir
-        - name: geodatadir
-  volumeClaimTemplates:
-    - metadata:
-        name: data
-      spec:
-        accessModes:
-          - "ReadWriteOnce"
-        resources:
-          requests:
-            storage: {{ .Values.persistence.size | quote }}
-      {{- with .Values.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-    {{- with .Values.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-    {{- end }}
-    {{- with .Values.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-    {{- end }}
+          persistentVolumeClaim:
+            claimName: {{ include "mapproxy.fullname" . }}
+        {{- else if and .Values.persistence.useExisting (.Values.persistence.existingPvcName) }}
+        - name: datadir
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.existingPvcName }}
+        {{- else }}
+        - name: datadir
+          emptyDir: {}
+        {{- end }}
