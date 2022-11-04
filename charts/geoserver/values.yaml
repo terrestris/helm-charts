@@ -1,0 +1,72 @@
+replicaCount: 1
+
+image:
+  repository: terrestris/geoserver
+  tag: ""
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: false
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+  hosts:
+    - host: geoserver.example.com
+      paths: [ "/" ]
+  tls:
+    - secretName: geoserver-secret
+      hosts:
+        - geoserver.example.com
+
+resources:
+  limits:
+    cpu: 2500m
+    memory: 8Gi
+  requests:
+    cpu: 500m
+    memory: 8Gi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+environment:
+  stableExtensions:
+  # replace example.com with your host
+  javaOptions: -Xms1g -Xmx2g -DGEOSERVER_CSRF_WHITELIST=localhost,example.com
+
+storage:
+  datadir: /opt/geoserver_data
+  # initDataUrl: https://files.example.com/geoserver_data.tgz
+
+# optional existing pvc for persistent geoserver data
+persistence:
+  enabled: false
+  useExisting: false
+  existingPvcName: ""
+  storageClassName: ""
+  accessMode: ReadWriteOnce
+  size: 8Gi
+
+probes:
+  livenessUrl: /geoserver/web/wicket/resource/org.geoserver.web.GeoServerBasePage/img/logo.png
+  readinessUrl: /geoserver/web/wicket/resource/org.geoserver.web.GeoServerBasePage/img/logo.png
+
+# extraEnv: |
+#   - name: QUERY_LAYER_MAX_FEATURES
+#     value: 100000
+
+# extraEnvFrom: |
+#   - secretRef:
+#       name: '{{ include "geoserver.fullname" . }}-secret'
