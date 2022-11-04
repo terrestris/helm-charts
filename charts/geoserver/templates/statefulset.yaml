@@ -62,9 +62,6 @@ spec:
             httpGet:
               path: {{ .Values.probes.livenessUrl }}
               port: http
-              httpHeaders:
-                - name: Accept
-                  value: image/png
             failureThreshold: 1
             periodSeconds: 60
           resources:
