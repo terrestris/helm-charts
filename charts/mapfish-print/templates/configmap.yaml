@@ -25,4 +25,5 @@ data:
       CMD="touch $FILE"
       echo $CMD
       eval $CMD
+      echo "Successfully extracted print apps to '{{ .Values.storage.printConfigDir }}'!"
     fi
