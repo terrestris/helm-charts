@@ -9,21 +9,17 @@ data:
     #!/bin/sh
     echo "check if geoserver_data initialized"
     FILE=/opt/geoserver_data/.init
-    if [ -z "{{ .Values.storage.initDataUrl }}" ]; then
-      echo "No download link specified."
-      exit 0
-    fi
     if [ -f "$FILE" ]; then
       echo "download geoserver_data already initialized"
     else
       echo "download geoserver_data"
-      CMD="wget -q -O /mnt/download/geoserver_data.tgz {{ .Values.storage.initDataUrl }}"
+      CMD="wget -q -O /mnt/download/geoserver_data.tgz '{{ .Values.storage.initDataUrl }}'"
       echo $CMD
       eval $CMD
       CMD="cd /opt/geoserver_data"
       echo $CMD
       eval $CMD
-      CMD="tar -zxf /mnt/download/geoserver_data.tgz --strip 1 --keep-old-files"
+      CMD="tar -zxf /mnt/download/geoserver_data.tgz --strip 1 -k"
       echo $CMD
       eval $CMD
       CMD="touch $FILE"

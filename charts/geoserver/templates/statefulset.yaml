@@ -22,7 +22,7 @@ spec:
         {{- toYaml . | nindent 8 }}
     {{- end }}
       initContainers:
-        {{- with .Values.storage.initDataUrl }}
+        {{- if and .Values.storage.initDataUrl }}
         - name: download-data
           image: alpine
           command: ["/bin/sh","/mnt/init-data.sh"]
