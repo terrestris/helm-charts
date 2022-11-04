@@ -4,3 +4,25 @@ metadata:
   labels:
 {{ include "mapfish-print.labels" . | indent 4 }}
   name: {{ include "mapfish-print.fullname" . }}
+data:
+  init-printapps.sh: |-
+    #!/bin/sh
+    echo "initializing print apps"
+    FILE={{ .Values.storage.printconfigdir }}/.init
+    if [ -f "$FILE" ]; then
+      echo "print apps already initialized"
+    else
+      echo "downloading print apps"
+      CMD="wget -q -O /mnt/download/printapps.tar.gz '{{ .Values.storage.printAppsUrl }}'"
+      echo $CMD
+      eval $CMD
+      CMD="cd {{ .Values.storage.printConfigDir }}"
+      echo $CMD
+      eval $CMD
+      CMD="tar -zxf /mnt/download/printapps.tar.gz --strip 1 -k"
+      echo $CMD
+      eval $CMD
+      CMD="touch $FILE"
+      echo $CMD
+      eval $CMD
+    fi

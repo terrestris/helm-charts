@@ -18,27 +18,64 @@ spec:
         {{- end }}
 {{ include "mapfish-print.labels" . | indent 8 }}
     spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      initContainers:
+        {{- if and .Values.storage.printAppsUrl }}
+        - name: init-printapps
+          image: alpine
+          command: ["/bin/sh","/mnt/init-printapps.sh"]
+          volumeMounts:
+            - name: temp
+              mountPath: /mnt/download
+            - name: init-configmap
+              mountPath: /mnt/
+            - name: print-config-dir
+              mountPath: {{ .Values.storage.printConfigDir }}
+        {{- end }}
       containers:
         - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            {{- with .Values.extraEnv }}
+            {{- tpl . $ | nindent 12 }}
+            {{- end }}
+          envFrom:
+            {{- with .Values.extraEnvFrom }}
+            {{- tpl . $ | nindent 12 }}
+            {{- end }}
           ports:
             - name: http
               containerPort: 8080
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /
+              path: {{ .Values.probes.livenessUrl }}
               port: http
             initialDelaySeconds: 60
           readinessProbe:
             httpGet:
-              path: /
+              path: {{ .Values.probes.readinessUrl }}
               port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-      imagePullSecrets:
-        - name: {{ .Values.image.pullSecret }}
+          volumeMounts:
+            - name: print-config-dir
+              mountPath: {{ .Values.storage.printConfigDir }}
+      volumes:
+        - name: temp
+          emptyDir: {}
+        - name: init-configmap
+          configMap:
+            name: {{ include "mapfish-print.fullname" . }}
+            items:
+              - key: init-printapps.sh
+                path: init-printapps.sh
+        - name: print-config-dir
+          emptyDir: {}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
