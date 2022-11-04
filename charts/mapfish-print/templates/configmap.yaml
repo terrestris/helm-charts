@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+{{ include "mapfish-print.labels" . | indent 4 }}
+  name: {{ include "mapfish-print.fullname" . }}
+data:
+  init-printapps.sh: |-
+    #!/bin/sh
+    echo "Initializing print apps"
+    FILE={{ .Values.storage.printconfigdir }}/.init
+    if [ -f "$FILE" ]; then
+      echo "Print apps already initialized"
+    else
+      echo "Downloading print apps"
+      CMD="wget -q -O /mnt/download/printapps.tar.gz '{{ .Values.storage.printAppsUrl }}'"
+      echo $CMD
+      eval $CMD
+      CMD="cd {{ .Values.storage.printConfigDir }}"
+      echo $CMD
+      eval $CMD
+      CMD="tar -zxf /mnt/download/printapps.tar.gz --strip 1 -k"
+      echo $CMD
+      eval $CMD
+      CMD="touch $FILE"
+      echo $CMD
+      eval $CMD
+      echo "Successfully extracted print apps to '{{ .Values.storage.printConfigDir }}'!"
+    fi

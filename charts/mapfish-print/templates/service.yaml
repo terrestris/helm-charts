@@ -1,0 +1,17 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "mapfish-print.fullname" . }}
+  labels:
+{{ include "mapfish-print.labels" . | indent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: {{ include "mapfish-print.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}

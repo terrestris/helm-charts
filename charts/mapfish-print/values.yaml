@@ -1,0 +1,65 @@
+replicaCount: 1
+
+logs:
+  enabled: true
+
+image:
+  repository: camptocamp/mapfish_print
+  tag: ""
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: false
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,X-XSRF-TOKEN"
+  hosts:
+    - host: mapfish-print.example.com
+      paths: [ "/" ]
+  tls:
+    - secretName: mapfish-print-secret
+      hosts:
+        - mapfish-print.example.com
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 2Gi
+  requests:
+    cpu: 100m
+    memory: 2Gi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+storage:
+  printConfigDir: /usr/local/tomcat/webapps/ROOT/print-apps
+  # printAppsUrl: https://files.example.com/printapps.tar.gz
+
+probes:
+  livenessUrl: /
+  readinessUrl: /
+
+# extraEnv: |
+#   - name: LOG_LEVEL
+#     value: DEBUG
+#   - name: JASPER_LOG_LEVEL
+#     value: DEBUG
+
+# extraEnvFrom: |
+#   - secretRef:
+#       name: '{{ include "mapfish-print.fullname" . }}-secret'
