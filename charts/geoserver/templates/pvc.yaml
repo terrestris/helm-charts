@@ -3,9 +3,9 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: {{ include "mapproxy.fullname" . }}
+  name: {{ include "geoserver.fullname" . }}
   labels:
-    {{- include "mapproxy.labels" . | nindent 4 }}
+    {{- include "geoserver.labels" . | nindent 4 }}
 spec:
   {{- if .Values.persistence.storageClassName }}
   storageClassName: {{ .Values.persistence.storageClassName }}
