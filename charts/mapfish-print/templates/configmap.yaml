@@ -7,12 +7,12 @@ metadata:
 data:
   init-printapps.sh: |-
     #!/bin/sh
-    echo "initializing print apps"
+    echo "Initializing print apps"
     FILE={{ .Values.storage.printconfigdir }}/.init
     if [ -f "$FILE" ]; then
-      echo "print apps already initialized"
+      echo "Print apps already initialized"
     else
-      echo "downloading print apps"
+      echo "Downloading print apps"
       CMD="wget -q -O /mnt/download/printapps.tar.gz '{{ .Values.storage.printAppsUrl }}'"
       echo $CMD
       eval $CMD
