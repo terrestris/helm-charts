@@ -8,7 +8,7 @@ data:
   init-printapps.sh: |-
     #!/bin/sh
     echo "Initializing print apps"
-    FILE={{ .Values.storage.printconfigdir }}/.init
+    FILE={{ .Values.storage.printConfigDir }}/.init
     if [ -f "$FILE" ]; then
       echo "Print apps already initialized"
     else

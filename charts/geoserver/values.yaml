@@ -47,7 +47,7 @@ environment:
   javaOptions: -Xms1g -Xmx2g -DGEOSERVER_CSRF_WHITELIST=localhost,example.com
 
 storage:
-  datadir: /opt/geoserver_data
+  dataDir: /opt/geoserver_data
   # initDataUrl: https://files.example.com/geoserver_data.tgz
 
 # optional existing pvc for persistent geoserver data

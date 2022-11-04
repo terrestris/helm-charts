@@ -7,16 +7,16 @@ metadata:
 data:
   init-data.sh: |-
     #!/bin/sh
-    echo "check if geoserver_data initialized"
-    FILE=/opt/geoserver_data/.init
+    echo "Checking if geoserver_data is already initialized…"
+    FILE={{ .Values.storage.dataDir }}/.init
     if [ -f "$FILE" ]; then
-      echo "download geoserver_data already initialized"
+      echo "Directory geoserver_data already initialized."
     else
-      echo "download geoserver_data"
+      echo "Downloading geoserver_data.tgz …"
       CMD="wget -q -O /mnt/download/geoserver_data.tgz '{{ .Values.storage.initDataUrl }}'"
       echo $CMD
       eval $CMD
-      CMD="cd /opt/geoserver_data"
+      CMD="cd {{ .Values.storage.dataDir }}"
       echo $CMD
       eval $CMD
       CMD="tar -zxf /mnt/download/geoserver_data.tgz --strip 1 -k"
@@ -25,4 +25,5 @@ data:
       CMD="touch $FILE"
       echo $CMD
       eval $CMD
+      echo "Successfully extracted geoserver_data directory to '{{ .Values.storage.dataDir }}'!"
     fi
