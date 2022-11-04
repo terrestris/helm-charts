@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: terrestris/geoserver
-  tag: 2.21.2
+  tag: ""
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
@@ -17,8 +17,7 @@ ingress:
   enabled: false
   annotations:
     kubernetes.io/ingress.class: nginx
-    kubernetes.io/tls-acme: "true"
-    cert-manager.io/cluster-issuer: letsencrypt
+    # kubernetes.io/tls-acme: "true"
     nginx.ingress.kubernetes.io/enable-cors: "true"
   hosts:
     - host: geoserver.example.com
