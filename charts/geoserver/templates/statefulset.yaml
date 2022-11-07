@@ -32,7 +32,7 @@ spec:
             - name: init-configmap
               mountPath: /mnt/
             - name: datadir
-              mountPath: {{ .Values.storage.datadir }}
+              mountPath: {{ .Values.storage.dataDir }}
         {{- end }}
       containers:
         - name: {{ .Chart.Name }}
@@ -68,7 +68,7 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
             - name: datadir
-              mountPath: {{ .Values.storage.datadir }}
+              mountPath: {{ .Values.storage.dataDir }}
       volumes:
         - name: temp
           emptyDir: {}
