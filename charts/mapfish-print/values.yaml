@@ -59,6 +59,10 @@ probes:
 #     value: DEBUG
 #   - name: JASPER_LOG_LEVEL
 #     value: DEBUG
+#   - name: PRINTCONFIG_USER
+#     value: user
+#   - name: PRINTCONFIG_PASSWORD
+#     value: pass
 
 # extraEnvFrom: |
 #   - secretRef:

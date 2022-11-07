@@ -27,6 +27,14 @@ spec:
         - name: init-printapps
           image: alpine
           command: ["/bin/sh","/mnt/init-printapps.sh"]
+          env:
+            {{- with .Values.extraEnv }}
+            {{- tpl . $ | nindent 12 }}
+            {{- end }}
+          envFrom:
+            {{- with .Values.extraEnvFrom }}
+            {{- tpl . $ | nindent 12 }}
+            {{- end }}
           volumeMounts:
             - name: temp
               mountPath: /mnt/download
