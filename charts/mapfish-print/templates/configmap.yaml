@@ -7,14 +7,20 @@ metadata:
 data:
   init-printapps.sh: |-
     #!/bin/sh
+    apk add --no-cache wget
     echo "Initializing print apps"
     FILE={{ .Values.storage.printConfigDir }}/.init
     if [ -f "$FILE" ]; then
       echo "Print apps already initialized"
     else
       echo "Downloading print apps"
-      CMD="wget -q -O /mnt/download/printapps.tar.gz '{{ .Values.storage.printAppsUrl }}'"
-      echo $CMD
+      if ([ -z "$PRINTCONFIG_USER" ] || [ -z "$PRINTCONFIG_PASSWORD" ]); then
+        echo "Downloading without credentials…"
+        CMD="wget -q -O /mnt/download/printapps.tar.gz '{{ .Values.storage.printAppsUrl }}'"
+      else
+        echo "Downloading with credentials…"
+        CMD="wget --user $PRINTCONFIG_USER --password $PRINTCONFIG_PASSWORD -q -O /mnt/download/printapps.tar.gz '{{ .Values.storage.printAppsUrl }}'"
+      fi
       eval $CMD
       CMD="cd {{ .Values.storage.printConfigDir }}"
       echo $CMD
