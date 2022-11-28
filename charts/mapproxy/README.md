@@ -9,6 +9,8 @@ The following mapproxy specific parameters can be configured in (custom) `values
 * `persistence.size`: Size of pvc (persistant volume claim)
 * `persistence.useExisting`: Should an existing pvc (persistant volume claim) be used, default: `false`
 * `persistence.existingPvcName`: The name of an existing pvc (persistant volume claim) that should be used to store mapproxy data in
+* `extraEnv`: Map of additional environment variables passed to mapproxy.
+* `extraEnvFrom`: Pass additional environment variables from secrets, configmaps etc.
 
 An existing `mapproxy.yaml` can easily be provided via a further config map. In this case add / modify (custom) `values.yaml` as follows:
 ```yaml

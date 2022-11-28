@@ -49,9 +49,16 @@ spec:
             {{- end }}
             - name: UWSGI_WSGI_FILE
               value: "/srv/mapproxy/config/app.py"
+            {{- with .Values.extraEnv }}
+            {{- tpl . $ | nindent 12 }}
+            {{- end }}
+          envFrom:
+            {{- with .Values.extraEnvFrom }}
+            {{- tpl . $ | nindent 12 }}
+            {{- end }}
           resources:
             {{- toYaml .Values.resources.mapproxy | nindent 12 }}
-          command: ["bash", "-c"]     
+          command: ["bash", "-c"]
           args: ["uwsgi --ini /srv/mapproxy/config/uwsgi.conf"]
           volumeMounts:
             - name: datadir
@@ -124,5 +131,5 @@ spec:
             claimName: {{ .Values.persistence.existingPvcName }}
         {{- else }}
         - name: datadir
-          emptyDir: {} 
+          emptyDir: {}
         {{- end }}

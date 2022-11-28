@@ -28,11 +28,11 @@ spec:
           image: alpine
           command: ["/bin/sh","/mnt/init-printapps.sh"]
           env:
-            {{- with .Values.extraEnv }}
+            {{- with .Values.extraInitEnv }}
             {{- tpl . $ | nindent 12 }}
             {{- end }}
           envFrom:
-            {{- with .Values.extraEnvFrom }}
+            {{- with .Values.extraInitEnvFrom }}
             {{- tpl . $ | nindent 12 }}
             {{- end }}
           volumeMounts:
