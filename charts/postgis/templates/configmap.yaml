@@ -26,17 +26,18 @@ data:
         echo "Downloading with credentials…"
         CMD="wget --user $DL_USER --password $DL_PASSWORD -q -O /mnt/download/postgresql_data.tar.gz '{{ .Values.dataImport.initDataUrl }}'"
       fi
-      echo $(du -h /var/lib/postgresql/data)
       eval $CMD
       CMD="cd {{ .Values.dataImport.dataDir }}"
       echo $CMD
       eval $CMD
-      CMD="tar -zxf /mnt/download/postgresql_data.tar.gz --strip 1 -k"
+      CMD="rm -rf {{ .Values.dataImport.dataDir }}/*"
+      echo $CMD
+      eval $CMD
+      CMD="tar -zxf /mnt/download/postgresql_data.tar.gz --strip 1 --overwrite"
       echo $CMD
       eval $CMD
       CMD="touch $FILE"
       echo $CMD
-      echo $(du -h /var/lib/postgresql/data)
       eval $CMD
       echo "Successfully extracted init data to '{{ .Values.dataImport.dataDir }}'!"
     fi

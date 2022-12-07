@@ -39,8 +39,9 @@ spec:
               mountPath: /mnt/download
             - name: init-configmap
               mountPath: /mnt/
-            - name: postgresql-data-dir
+            - name: data
               mountPath: {{ .Values.dataImport.dataDir }}
+              subPath: data
         {{- end }}
       containers:
         - name: {{ .Chart.Name }}
@@ -87,8 +88,6 @@ spec:
             items:
               - key: init-data.sh
                 path: init-data.sh
-        - name: postgresql-data-dir
-          emptyDir: {}
         - name: temp
           emptyDir: {}
         {{- end }}
