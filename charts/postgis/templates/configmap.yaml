@@ -12,6 +12,7 @@ data:
     {{- end }}
   init-data.sh: |-
     #!/bin/sh
+    set -e
     apk add --no-cache wget
     echo "Checking if postgresql data is already initialized…"
     FILE={{ .Values.dataImport.dataDir }}/.init
