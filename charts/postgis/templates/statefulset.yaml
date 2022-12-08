@@ -21,6 +21,28 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      initContainers:
+        {{- if and .Values.dataImport.enabled }}
+        - name: init-data
+          image: alpine
+          command: ["/bin/sh","/mnt/init-data.sh"]
+          env:
+            {{- with .Values.extraInitEnv }}
+            {{- tpl . $ | nindent 12 }}
+            {{- end }}
+          envFrom:
+            {{- with .Values.extraInitEnvFrom }}
+            {{- tpl . $ | nindent 12 }}
+            {{- end }}
+          volumeMounts:
+            - name: temp
+              mountPath: /mnt/download
+            - name: init-configmap
+              mountPath: /mnt/
+            - name: data
+              mountPath: {{ .Values.dataImport.dataDir }}
+              subPath: data
+        {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -58,15 +80,25 @@ spec:
           - name: init
             mountPath: /docker-entrypoint-initdb.d/
           {{- end }}
-      {{- if .Values.postgres.customInit.enabled }}
       volumes:
+        {{- if .Values.dataImport.enabled }}
+        - name: init-configmap
+          configMap:
+            name: {{ include "postgis.fullname" . }}
+            items:
+              - key: init-data.sh
+                path: init-data.sh
+        - name: temp
+          emptyDir: {}
+        {{- end }}
+        {{- if .Values.postgres.customInit.enabled }}
         - name: init
           configMap:
             name: {{ include "postgis.fullname" . }}
             items:
               - key: init.sql
                 path: init.sql
-      {{- end }}
+        {{- end }}
   volumeClaimTemplates:
     - metadata:
         name: data

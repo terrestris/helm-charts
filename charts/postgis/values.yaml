@@ -43,3 +43,12 @@ postgres:
 
 persistence:
   size: 8Gi
+
+dataImport:
+  enabled: false
+  # dataDir: /var/lib/postgresql/data
+  # initDataUrl: https://files.example.com/postgresql_data.tar.gz
+
+# extraInitEnvFrom: |
+#   - secretRef:
+#       name: initdatacred

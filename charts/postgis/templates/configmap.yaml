@@ -10,3 +10,34 @@ data:
     {{- range .Values.postgres.customInit.databases }}
     CREATE DATABASE {{ . }} OWNER {{ $.Values.postgres.customInit.user }};
     {{- end }}
+  init-data.sh: |-
+    #!/bin/sh
+    apk add --no-cache wget
+    echo "Checking if postgresql data is already initialized…"
+    FILE={{ .Values.dataImport.dataDir }}/.init
+    if [ -f "$FILE" ]; then
+      echo "Data directory already initialized."
+    else
+      echo "Downloading init data…"
+      if ([ -z "$DL_USER" ] || [ -z "$DL_PASSWORD" ]); then
+        echo "Downloading without credentials…"
+        CMD="wget -q -O /mnt/download/postgresql_data.tar.gz '{{ .Values.dataImport.initDataUrl }}'"
+      else
+        echo "Downloading with credentials…"
+        CMD="wget --user $DL_USER --password $DL_PASSWORD -q -O /mnt/download/postgresql_data.tar.gz '{{ .Values.dataImport.initDataUrl }}'"
+      fi
+      eval $CMD
+      CMD="cd {{ .Values.dataImport.dataDir }}"
+      echo $CMD
+      eval $CMD
+      CMD="rm -rf {{ .Values.dataImport.dataDir }}/*"
+      echo $CMD
+      eval $CMD
+      CMD="tar -zxf /mnt/download/postgresql_data.tar.gz --strip 1 --overwrite"
+      echo $CMD
+      eval $CMD
+      CMD="touch $FILE"
+      echo $CMD
+      eval $CMD
+      echo "Successfully extracted init data to '{{ .Values.dataImport.dataDir }}'!"
+    fi
