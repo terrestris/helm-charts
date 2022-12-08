@@ -34,6 +34,7 @@ affinity: {}
 postgres:
   user: postgres
   password: postgres
+  db: postgres
   customInit:
     enabled: false
 #    user: my_user

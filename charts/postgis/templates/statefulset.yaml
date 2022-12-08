@@ -54,6 +54,8 @@ spec:
               value: "{{ .Values.postgres.password }}"
             - name: POSTGRES_USER
               value: "{{ .Values.postgres.user }}"
+            - name: POSTGRES_DB
+              value: "{{ .Values.postgres.db }}"
           livenessProbe:
             exec:
               command:
