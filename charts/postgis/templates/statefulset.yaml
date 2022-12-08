@@ -35,13 +35,11 @@ spec:
             {{- tpl . $ | nindent 12 }}
             {{- end }}
           volumeMounts:
-            - name: temp
-              mountPath: /mnt/download
             - name: init-configmap
               mountPath: /mnt/
             - name: data
-              mountPath: {{ .Values.dataImport.dataDir }}
-              subPath: data
+              mountPath: /docker-entrypoint-initdb.d/
+              subPath: entrypoint
         {{- end }}
       containers:
         - name: {{ .Chart.Name }}
@@ -61,14 +59,14 @@ spec:
               command:
               - sh
               - -c
-              - exec pg_isready -U "postgres" -h 127.0.0.1 -p 5432
+              - exec pg_isready -U "{{ .Values.postgres.user }}" -h 127.0.0.1 -p 5432
             timeoutSeconds: 3 # setting to default timeout of pg_isready
           readinessProbe:
             exec:
               command:
               - sh
               - -c
-              - exec pg_isready -U "postgres" -h 127.0.0.1 -p 5432
+              - exec pg_isready -U "{{ .Values.postgres.user }}" -h 127.0.0.1 -p 5432
             timeoutSeconds: 3 # setting to default timeout of pg_isready
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
@@ -76,9 +74,14 @@ spec:
           - name: data
             mountPath: /var/lib/postgresql/data
             subPath: data
-          {{- if .Values.postgres.customInit.enabled }}
-          - name: init
+          {{- if or .Values.postgres.customInit.enabled }}
+          - name: init-db-sql
             mountPath: /docker-entrypoint-initdb.d/
+          {{- end }}
+          {{- if .Values.dataImport.enabled }}
+          - name: data
+            mountPath: /docker-entrypoint-initdb.d/
+            subPath: entrypoint
           {{- end }}
       volumes:
         {{- if .Values.dataImport.enabled }}
@@ -88,11 +91,9 @@ spec:
             items:
               - key: init-data.sh
                 path: init-data.sh
-        - name: temp
-          emptyDir: {}
         {{- end }}
         {{- if .Values.postgres.customInit.enabled }}
-        - name: init
+        - name: init-db-sql
           configMap:
             name: {{ include "postgis.fullname" . }}
             items:

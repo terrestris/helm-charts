@@ -9,8 +9,9 @@ The following parameters can be configured in `values.yaml`:
 These options allow to set up an initial database:
 
 1. `postgres.customInit`: Will use `init.sql` as a custom init script. This creates the specified role and database.
-2. `dataImport`: Extracts and uses the data available at `dataImport.initDataUrl` as the default data directory. CAUTION! This will overwrite existing data.
+2. `dataImport`: Extracts the archive available at `dataImport.initDataUrl` and copies all contained SQL files to `/docker-entrypoint-initdb.d`
     * Credentials can be provided by setting `DL_USER` and `DL_PASSWORD` via `extraInitEnv` or `extraInitEnvFrom`
+    * Required roles and databases must be created in these sql files.
 
 Both options cannot be enabled together!
 

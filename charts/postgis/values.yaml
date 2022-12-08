@@ -46,7 +46,6 @@ persistence:
 
 dataImport:
   enabled: false
-  # dataDir: /var/lib/postgresql/data
   # initDataUrl: https://files.example.com/postgresql_data.tar.gz
 
 # extraInitEnvFrom: |
