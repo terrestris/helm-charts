@@ -41,7 +41,11 @@ spec:
           env:
             - name: STABLE_EXTENSIONS
               value: {{ .Values.environment.stableExtensions }}
-            - name: EXTRA_JAVA_OPTS
+            - name: INSTALL_EXTENSIONS
+              value: "{{ .Values.environment.installExtensions }}"
+            - name: ADDITIONAL_LIBS_DIR
+              value: {{ .Values.storage.additionalLibsDir }}
+            - name: "EXTRA_JAVA_OPTS"
               value: {{ .Values.environment.javaOptions }}
             {{- with .Values.extraEnv }}
             {{- tpl . $ | nindent 12 }}
@@ -69,8 +73,12 @@ spec:
           volumeMounts:
             - name: datadir
               mountPath: {{ .Values.storage.dataDir }}
+            - name: additional-libs
+              mountPath: {{ .Values.storage.additionalLibsDir }}
       volumes:
         - name: temp
+          emptyDir: {}
+        - name: additional-libs
           emptyDir: {}
         - name: init-configmap
           configMap:
