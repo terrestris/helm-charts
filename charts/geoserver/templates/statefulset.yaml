@@ -42,7 +42,7 @@ spec:
             - name: STABLE_EXTENSIONS
               value: {{ .Values.environment.stableExtensions }}
             - name: INSTALL_EXTENSIONS
-              value: {{ .Values.environment.installExtensions }}
+              value: "{{ .Values.environment.installExtensions }}"
             - name: ADDITIONAL_LIBS_DIR
               value: {{ .Values.storage.additionalLibsDir }}
             - name: "EXTRA_JAVA_OPTS"
