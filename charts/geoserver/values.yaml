@@ -42,12 +42,14 @@ tolerations: []
 affinity: {}
 
 environment:
-  stableExtensions:
+  # installExtensions: "true"
+  # stableExtensions: css,querylayer
   # replace example.com with your host
   javaOptions: -Xms1g -Xmx2g -DGEOSERVER_CSRF_WHITELIST=localhost,example.com
 
 storage:
   dataDir: /opt/geoserver_data
+  additionalLibsDir: /opt/additional_libs
   # initDataUrl: https://files.example.com/geoserver_data.tgz
 
 # optional existing pvc for persistent geoserver data
