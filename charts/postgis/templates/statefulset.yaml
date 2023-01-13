@@ -62,7 +62,7 @@ spec:
               command:
               - sh
               - -c
-              - exec pg_isready -U "{{ .Values.postgres.user }}" -h 127.0.0.1 -p 5432
+              - exec pg_isready -U "{{ .Values.postgres.user }}" -h 127.0.0.1 -p 5432 -t "{{ .Values.livenessProbe.timeoutSeconds }}"
             timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
             initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
           {{- end }}
@@ -72,7 +72,7 @@ spec:
               command:
               - sh
               - -c
-              - exec pg_isready -U "{{ .Values.postgres.user }}" -h 127.0.0.1 -p 5432
+              - exec pg_isready -U "{{ .Values.postgres.user }}" -h 127.0.0.1 -p 5432 -t "{{ .Values.livenessProbe.timeoutSeconds }}"
             timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
             initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
           {{- end }}
@@ -82,7 +82,7 @@ spec:
               command:
               - sh
               - -c
-              - exec pg_isready -U "{{ .Values.postgres.user }}" -h 127.0.0.1 -p 5432
+              - exec pg_isready -U "{{ .Values.postgres.user }}" -h 127.0.0.1 -p 5432 -t "{{ .Values.livenessProbe.timeoutSeconds }}"
             initialDelaySeconds: {{ .Values.startupProbe.initialDelaySeconds }}
             timeoutSeconds: {{ .Values.startupProbe.timeoutSeconds }}
             failureThreshold: {{ .Values.startupProbe.failureThreshold }}
