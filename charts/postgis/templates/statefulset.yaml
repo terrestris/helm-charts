@@ -56,20 +56,38 @@ spec:
               value: "{{ .Values.postgres.user }}"
             - name: POSTGRES_DB
               value: "{{ .Values.postgres.db }}"
+          {{- if .Values.livenessProbe.enabled }}
           livenessProbe:
             exec:
               command:
               - sh
               - -c
               - exec pg_isready -U "{{ .Values.postgres.user }}" -h 127.0.0.1 -p 5432
-            timeoutSeconds: 3 # setting to default timeout of pg_isready
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+          {{- end }}
+          {{- if .Values.readinessProbe.enabled }}
           readinessProbe:
             exec:
               command:
               - sh
               - -c
               - exec pg_isready -U "{{ .Values.postgres.user }}" -h 127.0.0.1 -p 5432
-            timeoutSeconds: 3 # setting to default timeout of pg_isready
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+          {{- end }}
+          {{- if .Values.startupProbe.enabled }}
+          startupProbe:
+            exec:
+              command:
+              - sh
+              - -c
+              - exec pg_isready -U "{{ .Values.postgres.user }}" -h 127.0.0.1 -p 5432
+            initialDelaySeconds: {{ .Values.startupProbe.initialDelaySeconds }}
+            timeoutSeconds: {{ .Values.startupProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.startupProbe.failureThreshold }}
+            periodSeconds: {{ .Values.startupProbe.periodSeconds }}
+          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
