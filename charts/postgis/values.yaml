@@ -52,3 +52,20 @@ dataImport:
 # extraInitEnvFrom: |
 #   - secretRef:
 #       name: initdatacred
+
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 30
+  timeoutSeconds: 3 # default timeout of pg_isready
+
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 5
+  timeoutSeconds: 3 # default timeout of pg_isready
+
+startupProbe:
+  enabled: false
+  initialDelaySeconds: 60
+  timeoutSeconds: 1
+  failureThreshold: 15
+  periodSeconds: 5
