@@ -71,6 +71,10 @@ spec:
             - name: mapproxy-yaml
               mountPath: /srv/mapproxy/customconfig/
             {{- end }}
+            {{- if and .Values.customSeedConfig.enabled }}
+            - name: seed-yaml
+              mountPath: /srv/mapproxy/customconfig/
+            {{- end }}
         - name: mapproxy-nginx
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
@@ -118,6 +122,11 @@ spec:
         - name: mapproxy-yaml
           configMap:
             name: {{ .Values.customMapproxyConfig.configMapName }}
+        {{- end }}
+        {{- if and .Values.customSeedConfig.enabled }}
+        - name: seed-yaml
+          configMap:
+            name: {{ .Values.customSeedConfig.configMapName }}
         {{- end }}
         - name: socket
           emptyDir: {}
