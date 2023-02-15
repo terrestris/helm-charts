@@ -103,7 +103,11 @@ mapproxy:
 
 customMapproxyConfig:
   enabled: false
-  # configMapName: configMapName
+  configMapName: ""
+
+customSeedConfig:
+  enabled: false
+  configMapName: ""
 
 probes:
   livenessUrl: /mapproxy/wmts/1.0.0/WMTSCapabilities.xml

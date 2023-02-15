@@ -5,10 +5,10 @@ Helm chart that uses [`terrestris/mapproxy`](https://github.com/terrestris/docke
 The following mapproxy specific parameters can be configured in (custom) `values.yaml`:
 * `mapproxy.uwsgiProcesses`: The number of uwsgi processes (default: 2)
 * `mapproxy.uwsgiThreads`: The number of uwsgi threads (default: 20)
-* `persistence.enabled`: A default pvc (persistant volume claim) is used for persistent mapproxy data
-* `persistence.size`: Size of pvc (persistant volume claim)
-* `persistence.useExisting`: Should an existing pvc (persistant volume claim) be used, default: `false`
-* `persistence.existingPvcName`: The name of an existing pvc (persistant volume claim) that should be used to store mapproxy data in
+* `persistence.enabled`: A default pvc (persistent volume claim) is used for persistent mapproxy data
+* `persistence.size`: Size of pvc (persistent volume claim)
+* `persistence.useExisting`: Should an existing pvc (persistent volume claim) be used, default: `false`
+* `persistence.existingPvcName`: The name of an existing pvc (persistent volume claim) that should be used to store mapproxy data in
 * `extraEnv`: Map of additional environment variables passed to mapproxy.
 * `extraEnvFrom`: Pass additional environment variables from secrets, configmaps etc.
 
@@ -21,4 +21,12 @@ customMapproxyConfig:
 ```
 The config map itself could be created using kubectl via `kubectl create configmap your-config-map --from-file mapproxy.yaml`.
 
-Please note that cache paths (only if configured) have to match the ones configured in `volume` block (e.g base cache path: `/srv/mapproxy/cache_data`)
+Similarly, for the `seed.yaml` the configuration can be loaded from a configmap (e.g. `your-seed-config-map`) as well:
+```yaml
+...
+customSeedConfig:
+  enabled: true
+  configMapName: your-seed-config-map
+```
+
+Please note that cache paths (only if configured) have to match the ones configured in `volume` block (e.g. base cache path: `/srv/mapproxy/cache_data`)
