@@ -123,7 +123,7 @@ spec:
           configMap:
             name: {{ .Values.customMapproxyConfig.configMapName }}
         {{- end }}
-        {{- if and .Values.customSeedConfig.enabled }}
+        {{- if .Values.customSeedConfig.enabled }}
         - name: seed-yaml
           configMap:
             name: {{ .Values.customSeedConfig.configMapName }}
