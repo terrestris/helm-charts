@@ -71,7 +71,7 @@ spec:
             - name: mapproxy-yaml
               mountPath: /srv/mapproxy/customconfig/
             {{- end }}
-            {{- if .Values.customSeedConfig.enabled }}
+            {{- if and .Values.customSeedConfig.enabled }}
             - name: seed-yaml
               mountPath: /srv/mapproxy/customconfig/
             {{- end }}
