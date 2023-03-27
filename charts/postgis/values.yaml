@@ -44,6 +44,8 @@ postgres:
 
 persistence:
   size: 8Gi
+  accessMode: ReadWriteOnce
+  storageClassName: ""
 
 dataImport:
   enabled: false
