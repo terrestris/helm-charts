@@ -43,6 +43,9 @@ postgres:
 #      - my_database
 
 persistence:
+  enabled: false
+  useExisting: false
+  existingPvcName: ""
   size: 8Gi
   accessMode: ReadWriteOnce
   storageClassName: ""
