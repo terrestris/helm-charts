@@ -73,7 +73,7 @@ spec:
             {{- end }}
             {{- if and .Values.customSeedConfig.enabled }}
             - name: seed-yaml
-              mountPath: /srv/mapproxy/customconfig/
+              mountPath: /srv/mapproxy/customseedconfig/
             {{- end }}
         - name: mapproxy-nginx
           securityContext:
