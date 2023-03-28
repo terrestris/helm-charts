@@ -99,7 +99,7 @@ spec:
             mountPath: /docker-entrypoint-initdb.d/
           {{- end }}
           {{- if .Values.dataImport.enabled }}
-          - name: data
+          - name: datadir
             mountPath: /docker-entrypoint-initdb.d/
             subPath: entrypoint
           {{- end }}
