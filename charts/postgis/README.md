@@ -21,3 +21,9 @@ Both options cannot be enabled together!
 * `extraEnvFrom`: Pass additional environment variables from secrets, configmaps etc.
 * `extraInitEnv`: Map of additional environment variables passed to the init container.
 * `extraInitEnvFrom`: Pass additional environment variables from secrets, configmaps etc. to the init container.
+* `persistence.enabled`: Enable persistance (otherwise empty-dir is used)
+* `persistence.useExisting`: Use existing persistent volume claim (pvc); default: `false`
+* `persistence.existingPvcName`: The name of the existing persistent volume claim (pvc) to use
+* `persistence.size`: The size to allocate (default: `8Gi`)
+* `persistence.accessMode`: The access mode (default: `ReadWriteOnce`)
+* `persistence.storageClassName`: The name of the storage class (empty by default => will use default configured in your cluster)
