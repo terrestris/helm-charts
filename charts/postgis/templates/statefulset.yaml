@@ -37,7 +37,7 @@ spec:
           volumeMounts:
             - name: init-configmap
               mountPath: /mnt/
-            - name: data
+            - name: datadir
               mountPath: /docker-entrypoint-initdb.d/
               subPath: entrypoint
         {{- end }}
