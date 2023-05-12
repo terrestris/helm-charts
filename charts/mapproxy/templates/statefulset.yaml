@@ -5,6 +5,7 @@ metadata:
   labels:
     {{- include "mapproxy.labels" . | nindent 4 }}
 spec:
+  serviceName: {{ include "mapproxy.fullname" . }}
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
