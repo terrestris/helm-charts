@@ -57,20 +57,12 @@ ingress:
   #      - chart-example.local
 
 resources:
-  mapproxy:
-    limits:
-      cpu: 1000m
-      memory: 1Gi
-    requests:
-      cpu: 500m
-      memory: 512Mi
-  nginx:
-    limits:
-      cpu: 250m
-      memory: 256Mi
-    requests:
-      cpu: 250m
-      memory: 256Mi
+  limits:
+    cpu: 1
+    memory: 1500Mi
+  requests:
+    cpu: 250m
+    memory: 512Mi
 
 autoscaling:
   enabled: false
@@ -85,6 +77,28 @@ tolerations: []
 
 affinity: {}
 
+# Probes
+livenessProbe:
+  enabled: true
+  url: /mapproxy/wmts/1.0.0/WMTSCapabilities.xml
+  initialDelaySeconds: 15
+  timeoutSeconds: 3
+  periodSeconds: 30
+  failureThreshold: 5
+
+readinessProbe:
+  enabled: true
+  url: /mapproxy/wmts/1.0.0/WMTSCapabilities.xml
+  initialDelaySeconds: 0
+  timeoutSeconds: 1
+
+startupProbe:
+  enabled: true
+  url: /mapproxy/wmts/1.0.0/WMTSCapabilities.xml
+  failureThreshold: 15
+  initialDelaySeconds: 2
+  periodSeconds: 10
+
 # optional existing pvc for persistent mapproxy data
 persistence:
   enabled: false
@@ -94,21 +108,10 @@ persistence:
   useExisting: false
   existingPvcName: ""
 
-nginx:
-  version: latest
-
-mapproxy:
-  uwsgiProcesses: 2
-  uwsgiThreads: 16
-
 customMapproxyConfig:
   enabled: false
-  configMapName: ""
+  configMapName: custom-mapproxy-yaml
 
 customSeedConfig:
   enabled: false
-  configMapName: ""
-
-probes:
-  livenessUrl: /mapproxy/wmts/1.0.0/WMTSCapabilities.xml
-  readinessUrl: /mapproxy/wmts/1.0.0/WMTSCapabilities.xml
+  configMapName: custom-seed-yaml
