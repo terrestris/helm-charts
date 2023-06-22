@@ -103,8 +103,8 @@ startupProbe:
 persistence:
   enabled: false
   storageClassName: ""
-  accessMode: ReadWriteMany
-  size: 20Gi
+  accessMode: ReadWriteOnce
+  size: 5Gi
   useExisting: false
   existingPvcName: ""
 
