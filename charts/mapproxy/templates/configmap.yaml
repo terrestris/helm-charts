@@ -5,11 +5,6 @@ metadata:
   labels:
     {{- include "mapproxy.labels" . | nindent 4 }}
 data:
-  app.py: |-
-    # WSGI module for use with Apache mod_wsgi or gunicorn
-    import os
-    from mapproxy.wsgiapp import make_wsgi_app
-    application = make_wsgi_app(os.getenv('UWSGI_PYARGV'), reloader=True)
   mapproxy.yaml: |-
     # -------------------------------
     # MapProxy configuration.
@@ -17,8 +12,10 @@ data:
     # OSM example based on https://wiki.openstreetmap.org/wiki/MapProxy
     # -------------------------------
     services:
+      demo:
       wmts:
-        restful: true
+      wms:
+        srs: ['EPSG:3857']
 
     layers:
       - name: osm-terrestris
@@ -32,7 +29,7 @@ data:
         format: image/png
         cache:
           type: sqlite
-          directory: /srv/mapproxy/cache_data/osm_terrestris_cache
+          directory: /mapproxy/config/cache_data/osm_terrestris_cache
 
     sources:
       osm_terrestris:
@@ -49,10 +46,9 @@ data:
 
     globals:
       cache:
-        base_dir: '/srv/mapproxy/cache_data'
-        lock_dir: '/srv/mapproxy/cache_data/locks'
-        tile_lock_dir: '/srv/mapproxy/cache_data/tile_locks'
-
+        base_dir: '/mapproxy/config/cache_data'
+        lock_dir: '/mapproxy/config/cache_data/locks'
+        tile_lock_dir: '/mapproxy/config/cache_data/tile_locks'
     image:
       resampling_method: bicubic
   seed.yaml: |-
@@ -61,35 +57,3 @@ data:
         caches: [osm_terrestris_cache]
         refresh_before:
           weeks: 1
-  uwsgi.conf: |-
-    [uwsgi]
-    master = true
-    chdir = $(UWSGI_CHDIR)
-    pyargv = $(UWSGI_PYARGV)
-    wsgi-file = $(UWSGI_WSGI_FILE)
-    pidfile=/tmp/mapproxy.pid
-    socket = /tmp/uwsgi.sock
-    processes = $(UWSGI_PROCESSES)
-    threads = $(UWSGI_THREADS)
-    chmod-socket = 777
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ include "mapproxy.fullname" . }}-nginx
-  labels:
-    {{- include "mapproxy.labels" . | nindent 4 }}
-data:
-  default.conf: |-
-    server {
-        listen 80;
-
-        root /var/www/html/;
-
-        location /mapproxy/ {
-            rewrite /mapproxy/(.+) /$1 break;
-            uwsgi_param SCRIPT_NAME /mapproxy;
-            uwsgi_pass unix:///tmp/uwsgi.sock;
-            include uwsgi_params;
-        }
-    }

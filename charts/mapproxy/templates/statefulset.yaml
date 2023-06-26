@@ -34,72 +34,55 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          env:
-            - name: UWSGI_PROCESSES
-              value: "{{ .Values.mapproxy.uwsgiProcesses }}"
-            - name: UWSGI_THREADS
-              value: "{{ .Values.mapproxy.uwsgiThreads }}"
-            - name: UWSGI_CHDIR
-              value: "/srv/mapproxy/config"
-            {{- if and .Values.customMapproxyConfig.enabled }}
-            - name: UWSGI_PYARGV
-              value: "/srv/mapproxy/customconfig/mapproxy.yaml"
-            {{- else }}
-            - name: UWSGI_PYARGV
-              value: "/srv/mapproxy/config/mapproxy.yaml"
-            {{- end }}
-            - name: UWSGI_WSGI_FILE
-              value: "/srv/mapproxy/config/app.py"
-            {{- with .Values.extraEnv }}
-            {{- tpl . $ | nindent 12 }}
-            {{- end }}
-          envFrom:
-            {{- with .Values.extraEnvFrom }}
-            {{- tpl . $ | nindent 12 }}
-            {{- end }}
           resources:
-            {{- toYaml .Values.resources.mapproxy | nindent 12 }}
-          command: ["bash", "-c"]
-          args: ["uwsgi --ini /srv/mapproxy/config/uwsgi.conf"]
-          volumeMounts:
-            - name: datadir
-              mountPath: /srv/mapproxy/cache_data
-            - name: mapproxy-config
-              mountPath: /srv/mapproxy/config
-            - name: socket
-              mountPath: /tmp
-            {{- if and .Values.customMapproxyConfig.enabled }}
-            - name: mapproxy-yaml
-              mountPath: /srv/mapproxy/customconfig/
-            {{- end }}
-            {{- if and .Values.customSeedConfig.enabled }}
-            - name: seed-yaml
-              mountPath: /srv/mapproxy/customseedconfig/
-            {{- end }}
-        - name: mapproxy-nginx
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "nginx:{{ .Values.nginx.version }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          ports:
-            - name: http
-              containerPort: 80
-              protocol: TCP
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- if .Values.livenessProbe.enabled }}
           livenessProbe:
             httpGet:
-              path: {{ .Values.probes.livenessUrl }}
+              path: {{ .Values.livenessProbe.url }}
               port: http
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+          {{- end }}
+          {{- if .Values.readinessProbe.enabled }}
           readinessProbe:
             httpGet:
-              path: {{ .Values.probes.readinessUrl }}
+              path: {{ .Values.readinessProbe.url }}
               port: http
-          resources:
-            {{- toYaml .Values.resources.nginx | nindent 12 }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+          {{- end }}
+          {{- if .Values.startupProbe.enabled }}
+          startupProbe:
+            httpGet:
+              path: {{ .Values.startupProbe.url }}
+              port: http
+            initialDelaySeconds: {{ .Values.startupProbe.initialDelaySeconds }}
+            failureThreshold: {{ .Values.startupProbe.failureThreshold }}
+            periodSeconds: {{ .Values.startupProbe.periodSeconds }}
+          {{- end }}
           volumeMounts:
-            - name: nginx-config
-              mountPath: /etc/nginx/conf.d/
-            - name: socket
-              mountPath: /tmp
+            - name: cache-datadir
+              mountPath: /mapproxy/config/cache_data/
+            {{- if and .Values.customMapproxyConfig.enabled }}
+            - name: custom-mapproxy-yaml
+              mountPath: /mapproxy/config/mapproxy.yaml
+              subPath: mapproxy.yaml
+            {{- else }}
+            - name: {{ include "mapproxy.fullname" . }}-mapproxy-yaml
+              mountPath: /mapproxy/config/mapproxy.yaml
+              subPath: mapproxy.yaml
+            {{- end }}
+            {{- if and .Values.customSeedConfig.enabled }}
+            - name: custom-seed-yaml
+              mountPath: /mapproxy/config/seed.yaml
+              subPath: seed.yaml
+            {{- else }}
+            - name: {{ include "mapproxy.fullname" . }}-seed-yaml
+              mountPath: /mapproxy/config/seed.yaml
+              subPath: mapproxy.yaml
+            {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -113,33 +96,33 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-        - name: mapproxy-config
-          configMap:
-            name: {{ include "mapproxy.fullname" . }}
-        - name: nginx-config
-          configMap:
-            name: {{ include "mapproxy.fullname" . }}-nginx
         {{- if and .Values.customMapproxyConfig.enabled }}
-        - name: mapproxy-yaml
+        - name: custom-mapproxy-yaml
           configMap:
             name: {{ .Values.customMapproxyConfig.configMapName }}
+        {{- else}}
+        - name: {{ include "mapproxy.fullname" . }}-mapproxy-yaml
+          configMap:
+            name: {{ include "mapproxy.fullname" . }}
         {{- end }}
         {{- if .Values.customSeedConfig.enabled }}
-        - name: seed-yaml
+        - name: custom-seed-yaml
           configMap:
             name: {{ .Values.customSeedConfig.configMapName }}
+        {{- else}}
+        - name: {{ include "mapproxy.fullname" . }}-seed-yaml
+          configMap:
+            name: {{ include "mapproxy.fullname" . }}
         {{- end }}
-        - name: socket
-          emptyDir: {}
         {{- if and .Values.persistence.enabled (not .Values.persistence.useExisting) }}
-        - name: datadir
+        - name: cache-datadir
           persistentVolumeClaim:
             claimName: {{ include "mapproxy.fullname" . }}
         {{- else if and .Values.persistence.useExisting (.Values.persistence.existingPvcName) }}
-        - name: datadir
+        - name: cache-datadir
           persistentVolumeClaim:
             claimName: {{ .Values.persistence.existingPvcName }}
         {{- else }}
-        - name: datadir
+        - name: cache-datadir
           emptyDir: {}
         {{- end }}
