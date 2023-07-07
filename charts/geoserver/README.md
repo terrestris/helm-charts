@@ -1,6 +1,7 @@
 # Helm chart for github.com/terrestris/docker-geoserver
 
-Helm chart that uses the [`terrestris/docker-geoserver`](https://github.com/terrestris/docker-geoserver/) docker image for Kubernetes cluster deployments. The geoserver version can be defined in the `Chart.yaml` file by setting `appVersion`.
+Helm chart that uses the official [GeoServer](https://github.com/geoserver/docker/) docker image for Kubernetes cluster deployments.
+The geoserver version can be defined in the `Chart.yaml` file by setting `appVersion`.
 
 The following parameters can be configured in (a custom) `values.yaml`:
 
