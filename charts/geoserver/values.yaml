@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: terrestris/geoserver
+  repository: docker.osgeo.org/geoserver
   tag: ""
   pullPolicy: IfNotPresent
 
@@ -42,8 +42,8 @@ tolerations: []
 affinity: {}
 
 environment:
-  # installExtensions: "true"
-  # stableExtensions: css,querylayer
+  installExtensions: false
+  stableExtensions:
   # replace example.com with your host
   javaOptions: -Xms1g -Xmx2g -DGEOSERVER_CSRF_WHITELIST=localhost,example.com
 
