@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "gnos.fullname" . }}
+  labels:
+    {{- include "gnos.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "gnos.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "gnos.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "gnos.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+            - name: JAVA_OPTS
+              value: |-
+              -Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
+              -Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true
+              -Xms512M -Xss512M -Xmx2G -XX:+UseConcMarkSweepGC
+              -Dgeonetwork.resources.dir=/var/lib/geonetwork_data/resources
+              -Dgeonetwork.data.dir=/var/lib/geonetwork_data
+              -Dgeonetwork.codeList.dir=/var/lib/jetty/webapps/geonetwork/WEB-INF/data/config/codelist
+              -Dgeonetwork.schema.dir=/var/lib/jetty/webapps/geonetwork/WEB-INF/data/config/schema_plugins
+              -Dgeonetwork.db.type=postgres
+              -Djdbc.database={{ .Values.db.name }}
+              -Djdbc.username={{ .Values.db.username }}
+              -Djdbc.password={{ .Values.db.password }}
+              -Djdbc.host={{ .Values.db.host }}
+              -Djdbc.port={{ .Values.db.port }}
+            - name: ELASTICSEARCH_HOSTS
+              value: ["http://gnos-es-http:9200"]
+            - name: SERVER_NAME
+              value: gnos-kb-http
+            - name: KIBANA_INDEX
+              value: .dashboards
+          volumeMounts:
+            - name: datadir
+              mountPath: /var/lib/geonetwork_data/
+      volumes:
+        {{- if and .Values.persistence.enabled (not .Values.persistence.useExisting) }}
+        - name: datadir
+          persistentVolumeClaim:
+            claimName: {{ include "geoserver.fullname" . }}
+        {{- else if and .Values.persistence.useExisting (.Values.persistence.existingPvcName) }}
+        - name: datadir
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.existingPvcName }}
+        {{- else }}
+        - name: datadir
+          emptyDir: {}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
