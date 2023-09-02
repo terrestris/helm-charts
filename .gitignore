@@ -2,3 +2,4 @@ requirements.lock
 Chart.lock
 charts/**/*.tgz
 *.iml
+.idea/
