@@ -81,6 +81,8 @@ tolerations: []
 
 affinity: {}
 
+javaHeapSizeDefinition: -Xms512M -Xss512M -Xmx2G
+
 db:
   name: gnos
   username: postgres
@@ -91,7 +93,33 @@ db:
 persistence:
   enabled: false
   useExisting: false
-  existingPvcName: ""
-  storageClassName: ""
+  existingPvcName:
+  storageClassName:
   accessMode: ReadWriteOnce
   size: 8Gi
+
+# Probes
+livenessProbe:
+  enabled: true
+  url: /geonetwork/srv/eng/csw?SERVICE=CSW&VERSION=2.0.2&REQUEST=GetCapabilities
+  initialDelaySeconds: 15
+  timeoutSeconds: 3
+  periodSeconds: 30
+  failureThreshold: 5
+
+readinessProbe:
+  enabled: true
+  url: /geonetwork/srv/eng/csw?SERVICE=CSW&VERSION=2.0.2&REQUEST=GetCapabilities
+  initialDelaySeconds: 0
+  timeoutSeconds: 1
+
+startupProbe:
+  enabled: true
+  url: /geonetwork/srv/eng/csw?SERVICE=CSW&VERSION=2.0.2&REQUEST=GetCapabilities
+  failureThreshold: 15
+  initialDelaySeconds: 2
+  periodSeconds: 10
+
+elk:
+  name: gnos-elk
+  version: 7.1.1

@@ -37,34 +37,52 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+          {{- if .Values.livenessProbe.enabled }}
           livenessProbe:
             httpGet:
-              path: /
+              path: {{ .Values.livenessProbe.url }}
               port: http
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+          {{- end }}
+          {{- if .Values.readinessProbe.enabled }}
           readinessProbe:
             httpGet:
-              path: /
+              path: {{ .Values.readinessProbe.url }}
               port: http
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+          {{- end }}
+          {{- if .Values.startupProbe.enabled }}
+          startupProbe:
+            httpGet:
+              path: {{ .Values.startupProbe.url }}
+              port: http
+            initialDelaySeconds: {{ .Values.startupProbe.initialDelaySeconds }}
+            failureThreshold: {{ .Values.startupProbe.failureThreshold }}
+            periodSeconds: {{ .Values.startupProbe.periodSeconds }}
+          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
             - name: JAVA_OPTS
-              value: |
-                -Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
-                -Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true
-                -Xms512M -Xss512M -Xmx2G -XX:+UseConcMarkSweepGC
-                -Dgeonetwork.resources.dir=/var/lib/geonetwork_data/resources
-                -Dgeonetwork.data.dir=/var/lib/geonetwork_data
-                -Dgeonetwork.codeList.dir=/var/lib/jetty/webapps/geonetwork/WEB-INF/data/config/codelist
-                -Dgeonetwork.schema.dir=/var/lib/jetty/webapps/geonetwork/WEB-INF/data/config/schema_plugins
-                -Dgeonetwork.db.type=postgres
-                -Djdbc.database={{ .Values.db.name }}
-                -Djdbc.username={{ .Values.db.username }}
-                -Djdbc.password={{ .Values.db.password }}
-                -Djdbc.host={{ .Values.db.host }}
-                -Djdbc.port={{ .Values.db.port }}
-            - name: ELASTICSEARCH_HOSTS
-              value: "[\"http://gnos-es-http:9200\"]"
+              value: "-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF -Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true {{ .Values.javaHeapSizeDefinition }} -XX:+UseConcMarkSweepGC -Dgeonetwork.resources.dir=/var/lib/geonetwork_data/resources -Dgeonetwork.data.dir=/var/lib/geonetwork_data -Dgeonetwork.codeList.dir=/var/lib/jetty/webapps/geonetwork/WEB-INF/data/config/codelist -Dgeonetwork.schema.dir=/var/lib/jetty/webapps/geonetwork/WEB-INF/data/config/schema_plugins -Dgeonetwork.db.type=postgres"
+            - name: ES_HOST
+              value: {{ .Values.elk.name }}-es-http
+            - name: ES_USERNAME
+              value: "elastic"
+            - name: ES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.elk.name }}-es-elastic-user
+                  key: elastic
+            - name: ES_PROTOCOL
+              value: http
+            - name: ES_PORT
+              value: "9200"
+            - name: KB_HOST
+              value: {{ .Values.elk.name }}-kibana-kb-http
             - name: SERVER_NAME
               value: gnos-kb-http
             - name: KIBANA_INDEX
@@ -72,11 +90,14 @@ spec:
           volumeMounts:
             - name: datadir
               mountPath: /var/lib/geonetwork_data/
+            - name: jdbc-properties
+              mountPath: /var/lib/jetty/webapps/geonetwork/WEB-INF/config-db/jdbc.properties
+              subPath: jdbc.properties
       volumes:
         {{- if and .Values.persistence.enabled (not .Values.persistence.useExisting) }}
         - name: datadir
           persistentVolumeClaim:
-            claimName: {{ include "geoserver.fullname" . }}
+            claimName: {{ include "gnos.fullname" . }}
         {{- else if and .Values.persistence.useExisting (.Values.persistence.existingPvcName) }}
         - name: datadir
           persistentVolumeClaim:
@@ -85,6 +106,12 @@ spec:
         - name: datadir
           emptyDir: {}
         {{- end }}
+        - name: jdbc-properties
+          configMap:
+            name: {{ include "gnos.fullname" . }}
+            items:
+              - key: jdbc.properties
+                path: jdbc.properties
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
