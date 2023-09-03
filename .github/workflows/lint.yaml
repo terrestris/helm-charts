@@ -7,12 +7,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up Helm
         uses: azure/setup-helm@v3
         with:
-          version: v3.10.0
+          version: v3.12.0
 
       - uses: actions/setup-python@v4
         with:
@@ -20,13 +20,13 @@ jobs:
           check-latest: true
 
       - name: Set up chart-testing
-        uses: helm/chart-testing-action@v2.3.1
+        uses: helm/chart-testing-action@v2.4.0
 
       - name: Run chart-testing (lint)
         run: ct lint --chart-dirs . --all --validate-maintainers=false
 
       - name: Create kind cluster
-        uses: helm/kind-action@v1.4.0
+        uses: elm/kind-action@v1.7.0
 
       - name: Run chart-testing (install)
         run: ct install --chart-dirs . --all
