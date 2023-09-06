@@ -1,0 +1,13 @@
+apiVersion: v2
+name: geoserver-cloud
+description: A helm chart for geoserver-cloud
+icon: https://geoserver.org/img/uploads/geoserver_icon.png
+version: 0.1.0
+dependencies:
+  - name: geoservercloud
+    repository: https://camptocamp.github.io/helm-geoserver-cloud
+    version: 0.6.0
+  - name: rabbitmq
+    version: 11.16.2
+    repository: 'https://charts.bitnami.com/bitnami'
+    condition: rabbitmq.enabled

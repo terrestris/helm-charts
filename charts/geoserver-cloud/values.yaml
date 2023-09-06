@@ -1,0 +1,137 @@
+additionalVolumes: &additional-volumes
+  datadir:
+    persistentVolumeClaim:
+      claimName: gs-cloud-datadir-nfs-claim
+  cache:
+    persistentVolumeClaim:
+      claimName: gs-cloud-gwc-cache-nfs-claim
+  geodata:
+    configMap:
+      name: cm-jndi-geodata
+
+additionalVolumeMounts: &additional-volume-mounts
+  /opt/app/data_directory:
+    name: 'datadir'
+  /mnt/cache:
+    name: 'cache'
+  /custom/geodata:
+    name: 'geodata'
+    readOnly: true
+
+env: &env-override
+  RABBITMQ_HOST:
+    value: 'geoserver-rabbitmq'
+  RABBITMQ_USER:
+    value: 'geoserver'
+  RABBITMQ_PASSWORD:
+    type: secret
+    name: 'geoserver-rabbitmq'
+    key: 'rabbitmq-password'
+  SPRING_PROFILES_ACTIVE:
+    value: standalone,datadir,kube
+  GEOWEBCACHE_CACHE_DIR:
+    value: '/mnt/cache'
+  JAVA_OPTS:
+    value: '$(JAVA_OPTS_DEFAULT) -Dspring.config.additional-location=optional:file:/custom/geodata/jndi.yml'
+    order: 1
+
+additional-stuff: &additional-stuff
+  volumes:
+    <<: *additional-volumes
+  containers:
+    spring:
+      env:
+        <<: *env-override
+      volumeMounts:
+        <<: *additional-volume-mounts
+
+nfsserver: 172.17.0.1
+nfs:
+  raster:
+    pvcname: gs-cloud-raster-nfs-claim
+    pvname: gs-cloud-raster-nfs
+    path: /nfs/raster
+    storage: 10Gi
+  config:
+    pvcname: gs-cloud-datadir-nfs-claim
+    pvname: gs-cloud-datadir-nfs
+    path: /nfs/datadir
+    storage: 10Gi
+  cache:
+    pvcname: gs-cloud-gwc-cache-nfs-claim
+    pvname: gs-cloud-gwc-cache-nfs
+    path: /nfs/tiles
+    storage: 10Gi
+
+rabbitmq:
+  enabled: true
+  resources:
+    limits:
+      cpu: null
+      memory: 2Gi
+    requests:
+      cpu: 0.1
+      memory: 512Mi
+
+  image:
+    registry: docker.io
+    repository: bitnami/rabbitmq
+    tag: 3.11.18-debian-11-r7
+
+  auth:
+    username: geoserver
+    password: password
+    erlangCookie: cookie
+
+  persistence:
+    enabled: false
+
+geoservercloud:
+  global:
+    profile: standalone,datadir
+    image:
+      pullPolicy: IfNotPresent
+  geoserver:
+    ingress:
+      enabled: true
+      hostGroups:
+        host1:
+          tls:
+            enabled: false
+          hosts:
+            - gscloud.local
+    services:
+      gateway:
+        enabled: true
+        replicaCount: 1
+        ingress:
+          enabled: true
+        <<: *additional-stuff
+      webui:
+        enabled: true
+        replicaCount: 1
+        <<: *additional-stuff
+      rest:
+        enabled: true
+        replicaCount: 1
+        <<: *additional-stuff
+      wms:
+        enabled: true
+        replicaCount: 1
+        <<: *additional-stuff
+      wcs:
+        enabled: true
+        replicaCount: 1
+        <<: *additional-stuff
+      wfs:
+        enabled: true
+        replicaCount: 1
+        <<: *additional-stuff
+      wps:
+        enabled: true
+        replicaCount: 1
+        <<: *additional-stuff
+      gwc:
+        enabled: true
+        replicaCount: 1
+        <<: *additional-stuff
