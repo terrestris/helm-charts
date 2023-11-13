@@ -76,7 +76,7 @@ rabbitmq:
   image:
     registry: docker.io
     repository: bitnami/rabbitmq
-    tag: 3.11.18-debian-11-r7
+    tag: 3.12.8-debian-11-r1
 
   auth:
     username: geoserver
