@@ -48,12 +48,12 @@ Create a directory on your host machine (adjust to your needs): `mkdir -p /your/
 Startup a PostGIS database (adjust the volume definition to the directory you just created):
 
 ```shell
-docker run --rm --name=local_db \
+docker run --rm --name=local_gs_cloud_db \
 --env=POSTGRES_PASSWORD=password \
 --env=POSTGRES_USER=postgres \
 --env=POSTGRES_DB=postgres \
 --detach --volume /your/local/pg_cloud_data:/var/lib/postgresql/data \
---publish=5432:5432 postgis/postgis:15-3.4-alpine
+--publish=5432:5432 postgis/postgis:16-3.4-alpine
 ```
 
 Setup database: `PGPASSWORD=password psql -h localhost -p 5432 -U postgres`
