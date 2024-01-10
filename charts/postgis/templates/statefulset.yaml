@@ -56,6 +56,13 @@ spec:
               value: "{{ .Values.postgres.user }}"
             - name: POSTGRES_DB
               value: "{{ .Values.postgres.db }}"
+            {{- with .Values.extraEnv }}
+            {{- tpl . $ | nindent 12 }}
+            {{- end }}
+          envFrom:
+            {{- with .Values.extraEnvFrom }}
+            {{- tpl . $ | nindent 12 }}
+            {{- end }}
           {{- if .Values.livenessProbe.enabled }}
           livenessProbe:
             exec:
