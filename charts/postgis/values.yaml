@@ -57,6 +57,8 @@ dataImport:
 #   - secretRef:
 #       name: initdatacred
 
+# extraEnvFrom:
+
 livenessProbe:
   enabled: true
   initialDelaySeconds: 30
