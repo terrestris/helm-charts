@@ -49,6 +49,9 @@ spec:
             - containerPort: 5432
               name: postgres
               protocol: TCP
+          {{- if .Values.postgres.conf }}
+          args: ["-c", "config_file=/etc/postgresql/postgresql.conf"]
+          {{- end }}
           env:
             - name: POSTGRES_PASSWORD
               value: "{{ .Values.postgres.password }}"
