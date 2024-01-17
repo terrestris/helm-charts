@@ -34,6 +34,8 @@ postgres:
   user: postgres
   password: postgres
   db: postgres
+#  conf: |
+#    jit = off
   customInit:
     enabled: false
 #    user: my_user

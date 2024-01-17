@@ -110,6 +110,11 @@ spec:
             mountPath: /docker-entrypoint-initdb.d/
             subPath: entrypoint
           {{- end }}
+          {{- if .Values.postgres.conf }}
+          - name: postgresqlconf
+            mountPath: /etc/postgresql/postgresql.conf
+            subPath: postgresql.conf
+          {{- end }}
       volumes:
         {{- if .Values.dataImport.enabled }}
         - name: init-configmap
@@ -118,6 +123,14 @@ spec:
             items:
               - key: init-data.sh
                 path: init-data.sh
+        {{- end }}
+        {{- if .Values.postgres.conf }}
+        - name: postgresqlconf
+          configMap:
+            name: {{ include "postgis.fullname" . }}
+            items:
+              - key: postgresql.conf
+                path: postgresql.conf
         {{- end }}
         {{- if .Values.postgres.customInit.enabled }}
         - name: init-db-sql
