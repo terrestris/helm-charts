@@ -13,6 +13,10 @@ These options allow to set up an initial database:
     * Credentials can be provided by setting `DL_USER` and `DL_PASSWORD` via `extraInitEnv` or `extraInitEnvFrom`
     * Required roles and databases must be created in these sql files.
 
+## postgresql.conf
+
+* `postgres.conf`: Mounts the configured textblock (`|`) to `/etc/postgresql/postgresql.conf`.
+
 Both options cannot be enabled together!
 
 ## Additional configuration
