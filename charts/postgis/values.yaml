@@ -34,14 +34,15 @@ postgres:
   user: postgres
   password: postgres
   db: postgres
-#  conf: |
-#    jit = off
+  # conf: |
+  #   listen_addresses = '*'
+  #   jit = off
   customInit:
     enabled: false
-#    user: my_user
-#    password: my_password
-#    databases:
-#      - my_database
+    # user: my_user
+    # password: my_password
+    # databases:
+    #   - my_database
 
 persistence:
   enabled: false
