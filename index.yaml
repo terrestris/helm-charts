@@ -239,6 +239,16 @@ entries:
   postgis:
   - apiVersion: v1
     appVersion: 15-3.3-alpine
+    created: "2024-01-18T08:41:29.718987753Z"
+    description: PostGIS Helm chart
+    digest: 78a5dddebaf453986fe5e83aeebbf631af3f7430fb9761ce84a292491123d02b
+    icon: https://postgis.net/logos/postgis-logo.png
+    name: postgis
+    urls:
+    - https://github.com/terrestris/helm-charts/releases/download/postgis-1.2.2/postgis-1.2.2.tgz
+    version: 1.2.2
+  - apiVersion: v1
+    appVersion: 15-3.3-alpine
     created: "2024-01-17T15:30:43.732731424Z"
     description: PostGIS Helm chart
     digest: afc1ce2bc1968b9748fc4aace03d692bcb15661de750219f17dc896b2d046d55
@@ -387,4 +397,4 @@ entries:
     urls:
     - https://github.com/terrestris/helm-charts/releases/download/postgis-0.1.3/postgis-0.1.3.tgz
     version: 0.1.3
-generated: "2024-01-17T15:30:43.732909008Z"
+generated: "2024-01-18T08:41:29.719163829Z"
