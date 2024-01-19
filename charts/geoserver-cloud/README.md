@@ -63,7 +63,8 @@ Then:
 ```sql
 CREATE DATABASE ogscloud;
 CREATE ROLE username WITH LOGIN PASSWORD 'password';
-ALTER DATABASE ogscloud OWNER TO username ;
+ALTER DATABASE ogscloud OWNER TO username;
+ALTER USER username WITH SUPERUSER;
 ```
 
 Connect to the database: `\c ogscloud`
@@ -89,7 +90,6 @@ Add helm repos (only needed once):
 
 In the directory of this chart:
 
-* `helm repo index .` (once)
 * Update chart dependencies with `helm dependency update`.
 * Execute `helm upgrade --namespace=geoserver --create-namespace --install geoserver .`
 

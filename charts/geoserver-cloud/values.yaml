@@ -28,12 +28,37 @@ env: &env-override
     name: 'geoserver-rabbitmq'
     key: 'rabbitmq-password'
   SPRING_PROFILES_ACTIVE:
-    value: standalone,datadir,kube
+    value: standalone,jdbcconfig
+    # value: standalone,datadir,kube
   GEOWEBCACHE_CACHE_DIR:
     value: '/mnt/cache'
   JAVA_OPTS:
     value: '$(JAVA_OPTS_DEFAULT) -Dspring.config.additional-location=optional:file:/custom/geodata/jndi.yml'
     order: 1
+  JDBCCONFIG_DATABASE:
+    type: secret
+    name: 'gs-cloud-jdbc-db'
+    key: 'database'
+  JDBCCONFIG_HOST:
+    type: secret
+    name: 'gs-cloud-jdbc-db'
+    key: 'hostname'
+  JDBCCONFIG_USERNAME:
+    type: secret
+    name: 'gs-cloud-jdbc-db'
+    key: 'username'
+  JDBCCONFIG_PASSWORD:
+    type: secret
+    name: 'gs-cloud-jdbc-db'
+    key: 'password'
+  JDBCCONFIG_PORT:
+    type: secret
+    name: 'gs-cloud-jdbc-db'
+    key: 'port'
+  JDBCCONFIG_SCHEMA:
+    type: secret
+    name: 'gs-cloud-jdbc-db'
+    key: 'schema'
 
 additional-stuff: &additional-stuff
   volumes:
