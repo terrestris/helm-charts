@@ -76,16 +76,26 @@ CREATE SCHEMA data;
 CREATE SCHEMA config;
 ```
 
-### Usage
+### Example Usage
 
 Startup your local cluster as described [here](https://github.com/terrestris/kind-dev-cluster).
 
 Add `127.0.0.1       gscloud.local` to your `/etc/hosts`.
 
+Add helm repos (only needed once):
+
+* `helm repo add geoserver-cloud https://camptocamp.github.io/helm-geoserver-cloud`
+* `helm repo add bitnami https://charts.bitnami.com/bitnami`
+
 In the directory of this chart:
 
-Update chart dependencies with `helm dependency update`.
+* `helm repo index .` (once)
+* Update chart dependencies with `helm dependency update`.
+* Execute `helm upgrade --namespace=geoserver --create-namespace --install geoserver .`
 
-Execute `helm upgrade --install geoserver .`
+Helpful commands:
+
+* If you want to search for new versions, use this: `helm search repo geoserver-cloud/geoservercloud --versions`
+* Uninstall: `helm uninstall --namespace geoserver geoserver`
 
 Call http://gscloud.local/geoserver-cloud/web/ to login with the default credentials (admin/geoserver).
