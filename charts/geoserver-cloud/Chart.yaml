@@ -6,7 +6,7 @@ version: 0.1.0
 dependencies:
   - name: geoservercloud
     repository: https://camptocamp.github.io/helm-geoserver-cloud
-    version: 0.6.4
+    version: 0.7.0
   - name: rabbitmq
     version: 11.16.2
     repository: 'https://charts.bitnami.com/bitnami'
