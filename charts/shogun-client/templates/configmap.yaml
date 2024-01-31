@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+{{ include "shogun-client.labels" . | indent 4 }}
+  name: {{ include "shogun-client.fullname" . }}
+data:
+  gis-client-config: |-
+    var clientConfig = {
+        shogunBase: '{{ .Values.shogun.base }}',
+        keycloak: {
+          enabled: true,
+          host: 'https://{{ .Values.keycloak.host }}/auth',
+          realm: '{{ .Values.keycloak.realm }}',
+          clientId: '{{ .Values.keycloak.clientId }}',
+          onLoadAction: '{{ .Values.keycloak.onLoadAction }}'
+        },
+        print: {
+          url: '{{ .Values.print.base }}/print'
+        }
+    };
+
