@@ -1,0 +1,89 @@
+replicaCount: 1
+
+logs:
+  enabled: true
+
+image:
+  repository: docker-public.terrestris.de/shogun/shogun-boot
+  pullPolicy: IfNotPresent
+  pullSecret: regcred
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 9010
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+    cert-manager.io/cluster-issuer: vault-issuer
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+  hosts:
+    - host: shogun-boot.example.com
+      paths: [ "/" ]
+  tls:
+    - secretName: shogun-boot-tls
+      hosts:
+        - shogun-boot.example.com
+
+resources:
+  limits:
+    cpu: 1
+    memory: 2Gi
+  requests:
+    cpu: 500m
+    memory: 2Gi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+postgres:
+  host: postgis
+  port: 5432
+  name: shogun
+  schema: shogun
+
+keycloak:
+  host: shogun-keycloak
+  realm: shogun
+  clientId: shogun-boot
+  masterRealm: shogun
+  adminClientId: admin-cli
+
+shogun:
+  additionalJavaArgs: -Xms512m -Xmx512m -Djdk.serialSetFilterAfterRead=true -Dspring.config.location=/config/application.yml -Dlog4j2.configurationFile=file:/config/log4j2.yml
+
+envers:
+  enabled: false
+
+mail:
+  enabled: false
+  host: shogun-mail
+  port: 587
+
+controller:
+  applications: true
+  auth: true
+  cache: true
+  files: true
+  groups: true
+  imagefiles: true
+  info: true
+  layers: true
+  users: true
+  resource: true
+
+support:
+  email: support@example.com
+
+debug:
+  sql: false
+  cache: false
+  graphiql: false

@@ -1,0 +1,147 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "shogun-boot.fullname" . }}
+  labels:
+{{ include "shogun-boot.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+{{ include "shogun-boot.selectorLabels" . | indent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- if .Values.logs.enabled }}
+        fluentd: "true"
+        {{- end }}
+{{ include "shogun-boot.labels" . | indent 8 }}
+    spec:
+      initContainers:
+        - name: check-db-ready
+          image: postgis/postgis:13-3.2-alpine
+          command: ['sh', '-c',
+            'until pg_isready -h {{ .Values.postgres.host }} -p {{ .Values.postgres.port }};
+            do echo waiting for database; sleep 2; done;']
+        - name: check-db
+          image: postgis/postgis:13-3.2-alpine
+          command: ['sh', '-c',
+            '/script/init.sh']
+          volumeMounts:
+            - name: init
+              mountPath: "/script"
+          env:
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgiscred
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgiscred
+                  key: password
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgiscred
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgiscred
+                  key: password
+            - name: KEYCLOAK_USER
+              valueFrom:
+                secretKeyRef:
+                  name: keycloakcred
+                  key: username
+            - name: KEYCLOAK_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: keycloakcred
+                  key: password
+            {{- if .Values.mail.enabled }}
+            - name: MAIL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mailcred
+                  key: username
+            - name: MAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mailcred
+                  key: password
+            {{- end }}
+            - name: JAVA_TOOL_OPTIONS
+              value: {{ .Values.shogun.additionalJavaArgs }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 60
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: config-volume
+              mountPath: /config/application.yml
+              subPath: application.yml
+            - name: log4j2-config-volume
+              mountPath: /config/log4j2.yml
+              subPath: log4j2.yml
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ include "shogun-boot.fullname" . }}
+            items:
+              - key: application-config
+                path: application.yml
+        - name: log4j2-config-volume
+          configMap:
+            name: {{ include "shogun-boot.fullname" . }}
+            items:
+              - key: log4j2-config
+                path: log4j2.yml
+        - name: init
+          configMap:
+            name: {{ include "shogun-boot.fullname" . }}
+            defaultMode: 0777
+            items:
+              - key: init-sh
+                path: "init.sh"
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecret }}
+      {{- range .Values.hostAliases }}
+      hostAliases:
+        - ip: {{ .ip | quote }}
+          hostnames:
+            {{- range .hostnames }}
+            - {{ .hostname }}
+            {{- end }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

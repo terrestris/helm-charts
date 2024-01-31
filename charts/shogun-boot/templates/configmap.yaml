@@ -1,0 +1,258 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+{{ include "shogun-boot.labels" . | indent 4 }}
+  name: {{ include "shogun-boot.fullname" . }}
+data:
+  init-sh: |-
+    #!/bin/sh
+    export PGPASSWORD=${DB_PASSWORD}
+    echo "SELECT 'CREATE DATABASE {{ .Values.postgres.name }}' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '{{ .Values.postgres.name }}')\gexec" | psql -h {{ .Values.postgres.host }} -U ${DB_USER}
+    psql -h {{ .Values.postgres.host }} -U ${DB_USER} {{ .Values.postgres.name }} -c 'CREATE EXTENSION IF NOT EXISTS postgis;'
+  application-config: |-
+    server:
+      port: 8080
+      # this flag is needed to properly redirect to https:
+      forward-headers-strategy: framework
+      max-http-header-size: 64KB
+      servlet:
+        context-path: /
+      error:
+        whitelabel:
+          enabled: true
+        include-stacktrace: never
+
+    spring:
+      servlet:
+        multipart:
+          max-file-size: 10MB
+          max-request-size: 10MB
+      main:
+        banner-mode: off
+      jpa:
+        # Show SQL statements
+        show-sql: {{ .Values.debug.sql }}
+        open-in-view: true
+        database-platform: org.hibernate.spatial.dialect.postgis.PostgisPG95Dialect
+        hibernate:
+          jdbc:
+            lob:
+              non_contextual_creation: true
+          ddl-auto: none
+        properties:
+          jakarta:
+            persistence:
+              sharedCache:
+                # Only entities with @Cacheable annotation will use L2 cache
+                mode: ENABLE_SELECTIVE
+          org:
+            hibernate:
+              # See https://docs.jboss.org/envers/docs/#configuration
+              envers:
+                default_schema: shogun_rev
+                audit_table_prefix: _rev
+                global_with_modified_flag: true
+          hibernate:
+            id:
+              db_structure_naming_strategy: single
+            jakarta:
+              cache:
+                provider: org.ehcache.jsr107.EhcacheCachingProvider
+                uri: ehcache.xml
+            format_sql: true
+            # Generate statistics to check if L2/query cache is actually being used
+            generate_statistics: {{ .Values.debug.cache }}
+            cache:
+              # Enable L2 cache
+              use_second_level_cache: true
+              # Enable query cache
+              use_query_cache: true
+              region:
+                factory_class: org.hibernate.cache.jcache.JCacheRegionFactory
+            integration:
+              envers:
+                # Set this to false to disable auditing entity changes
+                enabled: {{ .Values.envers.enabled }}
+      messages:
+        basename: org/springframework/security/messages, de/terrestris/shogun/lib/messages
+      jackson:
+        serialization:
+          fail-on-empty-beans: false
+      flyway:
+        enabled: true
+        baselineOnMigrate: true
+        locations: classpath:db/migration
+        defaultSchema: shogun
+        schemas: shogun, public
+        outOfOrder: true
+      datasource:
+        platform: postgres
+        url: jdbc:postgresql://{{ .Values.postgres.host }}/{{ .Values.postgres.name }}?currentSchema={{ .Values.postgres.schema }}
+        username: ${DB_USER}
+        password: ${DB_PASSWORD}
+      session:
+        store-type: none
+      {{- if .Values.mail.enabled }}
+      mail:
+        host: {{ .Values.mail.host }}
+        port: {{ .Values.mail.port }}
+        protocol: smtp
+        username: ${MAIL_USER}
+        password: ${MAIL_PASSWORD}
+        properties:
+          mail:
+            transport:
+              protocol: smtp
+            smtp:
+              auth: true
+              starttls:
+                enable: true
+              timeout: 8000
+      {{- end }}
+      security:
+        oauth2:
+          resourceserver:
+            jwt:
+              issuer-uri: https://{{ .Values.keycloak.host }}/auth/realms/{{ .Values.keycloak.realm }}
+              jwk-set-uri: https://{{ .Values.keycloak.host }}/auth/realms/{{ .Values.keycloak.realm }}/protocol/openid-connect/certs
+      graphql:
+        graphiql:
+          enabled: {{ .Values.debug.graphiql }}
+
+    keycloak:
+      enabled: true
+      server-url: https://{{ .Values.keycloak.host }}/auth
+      username: ${KEYCLOAK_USER}
+      password: ${KEYCLOAK_PASSWORD}
+      master-realm: {{ .Values.keycloak.masterRealm }}
+      admin-client-id: {{ .Values.keycloak.adminClientId }}
+      realm: {{ .Values.keycloak.realm }}
+      client-id: {{ .Values.keycloak.clientId }}
+      principal-attribute: preferred_username
+      disableHostnameVerification: true
+      internal-server-url: shogun-keycloak
+
+    controller:
+      applications:
+        enabled: {{ .Values.controller.applications }}
+      auth:
+        enabled: {{ .Values.controller.auth }}
+      cache:
+        enabled: {{ .Values.controller.cache }}
+      files:
+        enabled: {{ .Values.controller.files }}
+      groups:
+        enabled: {{ .Values.controller.groups }}
+      imagefiles:
+        enabled: {{ .Values.controller.imagefiles }}
+      info:
+        enabled: {{ .Values.controller.info }}
+      layers:
+        enabled: {{ .Values.controller.layers }}
+      users:
+        enabled: {{ .Values.controller.users }}
+      resource:
+        enabled: {{ .Values.controller.resource }}
+
+    upload:
+      file:
+        supportedContentTypes:
+          - application/json
+          - application/pdf
+          - application/xml
+          - application/zip
+          - text/comma-separated-values
+          - text/plain
+          - text/xml
+      image:
+        thumbnailSize: 100
+        supportedContentTypes:
+          - image/bmp
+          - image/gif
+          - image/jpeg
+          - image/png
+          - image/svg+xml
+          - image/tiff
+      basePath: /data
+      maxSize: 500M
+
+    support:
+      email: {{ .Values.support.email }}
+
+    logging:
+      config: /config/log4j2.yml
+      file:
+        name: /var/log/shogun/shogun.log
+
+    management:
+      endpoints:
+        web:
+          exposure:
+            include: "*"
+
+  log4j2-config: |-
+    Configuration:
+      Appenders:
+        Console:
+          name: STDOUT
+          PatternLayout:
+            Pattern: '%highlight{%d{HH:mm:ss.SSS} %-5level %logger{36}.%M() @%L - %msg%n}{FATAL=red blink, ERROR=red, WARN=yellow bold, INFO=white, DEBUG=green bold, TRACE=blue}'
+        RollingFile:
+          name: ROLLING_FILE
+          fileName: /var/log/shogun/shogun.log
+          filePattern: "/var/log/shogun/shogun.log.%d{yyyy-MM-dd}.gz"
+          PatternLayout:
+            Pattern: '[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n'
+          Policies:
+            TimeBasedTriggeringPolicy:
+              interval: 1
+              modulate: true
+            SizeBasedTriggeringPolicy:
+              size: 100 MB
+          DefaultRolloverStrategy:
+            Delete:
+              basePath: /var/log/shogun
+              maxDepth: 2
+              IfFileName:
+                glob: "*/$shogun*log.gz"
+              IfLastModified:
+                age: 30d
+      Loggers:
+        Root:
+          level: info
+          AppenderRef:
+            - ref: STDOUT
+            - ref: ROLLING_FILE
+
+        logger:
+          - name: de.terrestris
+            level: info
+          - name: org.flywaydb
+            level: info
+          - name: com.zaxxer.hikari
+            level: info
+          - name: io.lettuce
+            level: info
+          - name: io.netty
+            level: info
+          - name: org.thymeleaf
+            level: info
+          - name: org.hibernate
+            level: info
+          - name: org.hibernate.SQL
+            level: info
+          - name: org.hibernate.type.descriptor.sql
+            level: info
+          - name: org.springframework.boot
+            level: info
+          - name: org.springframework
+            level: info
+          - name: org.keycloak
+            level: info
+          - name: org.springdoc
+            level: info
+          - name: com.graphql-java
+            level: info
+          - name: org.reflections
+            level: error
