@@ -1,0 +1,101 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "shogun-admin.fullname" . }}
+  labels:
+{{ include "shogun-admin.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+{{ include "shogun-admin.selectorLabels" . | indent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- if .Values.logs.enabled }}
+        fluentd: "true"
+        {{- end }}
+{{ include "shogun-admin.labels" . | indent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 60
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: config-volume
+              mountPath: "/var/www/html/config/admin-client-config.js"
+              subPath: admin-client-config.js
+            - name: index-html-volume
+              mountPath: "/var/www/html/index.html"
+              subPath: index.html
+            - name: application-config-volume
+              mountPath: "/var/www/html/modelconfigs/application.json"
+              subPath: application.json
+            - name: layer-config-volume
+              mountPath: "/var/www/html/modelconfigs/layer.json"
+              subPath: layer.json
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ include "shogun-admin.fullname" . }}
+            items:
+              - key: admin-client-config
+                path: "admin-client-config.js"
+        - name: application-config-volume
+          configMap:
+            name: {{ include "shogun-admin.fullname" . }}
+            items:
+              - key: application-config
+                path: "application.json"
+        - name: layer-config-volume
+          configMap:
+            name: {{ include "shogun-admin.fullname" . }}
+            items:
+              - key: layer-config
+                path: "layer.json"
+        - name: index-html-volume
+          configMap:
+            name: {{ include "shogun-admin.fullname" . }}
+            items:
+              - key: index-html
+                path: "index.html"
+      {{- with .Values.image.pullSecret }}
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecret }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- range .Values.hostAliases }}
+      hostAliases:
+        - ip: {{ .ip | quote }}
+          hostnames:
+            {{- range .hostnames }}
+            - {{ .hostname }}
+            {{- end }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
