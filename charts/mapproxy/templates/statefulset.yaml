@@ -40,7 +40,7 @@ spec:
           livenessProbe:
             httpGet:
               path: {{ .Values.livenessProbe.url }}
-              port: http
+              port: {{ .Values.livenessProbe.port }}
             timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
             initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
@@ -49,7 +49,7 @@ spec:
           readinessProbe:
             httpGet:
               path: {{ .Values.readinessProbe.url }}
-              port: http
+              port: {{ .Values.readinessProbe.port }}
             timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
             initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
           {{- end }}
@@ -57,7 +57,7 @@ spec:
           startupProbe:
             httpGet:
               path: {{ .Values.startupProbe.url }}
-              port: http
+              port: {{ .Values.startupProbe.port }}
             initialDelaySeconds: {{ .Values.startupProbe.initialDelaySeconds }}
             failureThreshold: {{ .Values.startupProbe.failureThreshold }}
             periodSeconds: {{ .Values.startupProbe.periodSeconds }}

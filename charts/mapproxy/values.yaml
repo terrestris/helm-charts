@@ -79,24 +79,27 @@ affinity: {}
 # Probes
 livenessProbe:
   enabled: true
-  url: /mapproxy/wmts/1.0.0/WMTSCapabilities.xml
-  initialDelaySeconds: 15
-  timeoutSeconds: 3
-  periodSeconds: 30
   failureThreshold: 5
+  initialDelaySeconds: 15
+  periodSeconds: 30
+  port: 80
+  timeoutSeconds: 3
+  url: /mapproxy/wmts/1.0.0/WMTSCapabilities.xml
 
 readinessProbe:
   enabled: true
-  url: /mapproxy/wmts/1.0.0/WMTSCapabilities.xml
   initialDelaySeconds: 0
+  port: 80
   timeoutSeconds: 1
+  url: /mapproxy/wmts/1.0.0/WMTSCapabilities.xml
 
 startupProbe:
   enabled: true
-  url: /mapproxy/wmts/1.0.0/WMTSCapabilities.xml
   failureThreshold: 15
   initialDelaySeconds: 2
   periodSeconds: 10
+  port: 80
+  url: /mapproxy/wmts/1.0.0/WMTSCapabilities.xml
 
 # optional existing pvc for persistent mapproxy data
 persistence:
