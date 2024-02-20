@@ -42,7 +42,7 @@ shogun:
 
 keycloak:
   host: keycloak.example.com
-  realm: shogun
+  realm: SHOGun
   clientId: shogun-admin
   authorizedAdminRole: admin
 

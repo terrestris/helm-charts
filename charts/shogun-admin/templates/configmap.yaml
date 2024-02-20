@@ -16,7 +16,7 @@ data:
       security: {
         keycloak: {
           enabled: true,
-          host: 'https://{{ .Values.keycloak.host }}/auth',
+          host: 'https://{{ .Values.keycloak.host }}',
           realm: '{{ .Values.keycloak.realm }}',
           clientId: '{{ .Values.keycloak.clientId }}',
           authorizedRoles: [

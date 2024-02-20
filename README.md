@@ -27,3 +27,20 @@ Please note: changes in `README.md` are ignored.
 * !Pods do normally not restart if the image has not changed!
   * Use `kubectl delete pod <podname>` to explicitly restart a container
   * TODO: Check if pullStrategy: Always helps. We probably need this anyways if we want to change appVersions in the values files
+
+## Setting up shogun cluster with kind-dev-cluster
+```bash
+# first we need to build a container containing the default realm settings 
+docker build -t keycloak-data:1.0 data/keycloak/
+kind load docker-image --name kind-dev-cluster keycloak-data:1.0 docker.terrestris.de/postgis/postgis:15-3.3-alpine docker-public.terrestris.de/terrestris/shogun-admin:11.4.0 docker-public.terrestris.de/shogun/shogun-boot:18.0.0 docker-public.terrestris.de/terrestris/shogun-gis-client:6.9.0
+kubectl create secret generic postgiscred --from-literal=username=postgres --from-literal=password=postgres
+kubectl create secret generic keycloakcred --from-literal=username=admin --from-literal=password=admin
+cd charts/shogun-cloud
+helm dependency build
+helm install shogun-cloud ./ --values ./values.yaml
+kubectl port-forward service/shogun-cloud-keycloak 1234:https
+kubectl port-forward service/shogun-cloud-shogun-boot 1235:http
+kubectl port-forward service/shogun-cloud-shogun-client 1236:http
+kubectl port-forward service/shogun-cloud-shogun-admin 1237:http
+# TODO: use ingress and map services to different folders instead of using port-forwardings
+```

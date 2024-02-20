@@ -20,12 +20,12 @@ spec:
     spec:
       initContainers:
         - name: check-db-ready
-          image: postgis/postgis:13-3.2-alpine
+          image: {{ .Values.postgresInitImage }}
           command: ['sh', '-c',
             'until pg_isready -h {{ .Values.postgres.host }} -p {{ .Values.postgres.port }};
             do echo waiting for database; sleep 2; done;']
         - name: check-db
-          image: postgis/postgis:13-3.2-alpine
+          image: {{ .Values.postgresInitImage }}
           command: ['sh', '-c',
             '/script/init.sh']
           volumeMounts:
@@ -123,8 +123,6 @@ spec:
             items:
               - key: init-sh
                 path: "init.sh"
-      imagePullSecrets:
-        - name: {{ .Values.image.pullSecret }}
       {{- range .Values.hostAliases }}
       hostAliases:
         - ip: {{ .ip | quote }}

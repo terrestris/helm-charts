@@ -38,7 +38,7 @@ resources:
 
 keycloak:
   host: shogun-keycloak
-  realm: shogun
+  realm: SHOGun
   clientId: shogun-client
   onLoadAction: login-required
 
