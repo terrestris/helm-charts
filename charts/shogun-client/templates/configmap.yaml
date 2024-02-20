@@ -10,7 +10,7 @@ data:
         shogunBase: '{{ .Values.shogun.base }}',
         keycloak: {
           enabled: true,
-          host: 'https://{{ .Values.keycloak.host }}/auth',
+          host: 'https://{{ .Values.keycloak.host }}',
           realm: '{{ .Values.keycloak.realm }}',
           clientId: '{{ .Values.keycloak.clientId }}',
           onLoadAction: '{{ .Values.keycloak.onLoadAction }}'

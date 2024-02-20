@@ -6,7 +6,6 @@ logs:
 image:
   repository: docker-public.terrestris.de/shogun/shogun-boot
   pullPolicy: IfNotPresent
-  pullSecret: regcred
 
 nameOverride: ""
 fullnameOverride: ""
@@ -44,17 +43,19 @@ tolerations: []
 
 affinity: {}
 
+postgresInitImage: docker.terrestris.de/postgis/postgis:15-3.3-alpine
+
 postgres:
-  host: postgis
+  host: postgis.default.svc.cluster.local
   port: 5432
   name: shogun
   schema: shogun
 
 keycloak:
-  host: shogun-keycloak
-  realm: shogun
+  host: keycloak.default.svc.cluster.local
+  realm: SHOGun
   clientId: shogun-boot
-  masterRealm: shogun
+  masterrealm: SHOGun
   adminClientId: admin-cli
 
 shogun:
