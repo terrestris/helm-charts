@@ -35,12 +35,12 @@ spec:
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
-                  name: postgiscred
+                  name: postgres-credentials
                   key: username
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgiscred
+                  name: postgres-credentials
                   key: password
       containers:
         - name: {{ .Chart.Name }}
@@ -50,33 +50,33 @@ spec:
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
-                  name: postgiscred
+                  name: postgres-credentials
                   key: username
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgiscred
+                  name: postgres-credentials
                   key: password
             - name: KEYCLOAK_USER
               valueFrom:
                 secretKeyRef:
-                  name: keycloakcred
+                  name: keycloak-credentials
                   key: username
             - name: KEYCLOAK_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: keycloakcred
+                  name: keycloak-credentials
                   key: password
             {{- if .Values.mail.enabled }}
             - name: MAIL_USER
               valueFrom:
                 secretKeyRef:
-                  name: mailcred
+                  name: mail-credentials
                   key: username
             - name: MAIL_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: mailcred
+                  name: mail-credentials
                   key: password
             {{- end }}
             - name: JAVA_TOOL_OPTIONS

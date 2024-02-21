@@ -1,11 +1,11 @@
 1. variable to disable postgis, admin, client, keycloak, geoserver
 2. secrets should be used on both sides (future: sealed secret?)
    1. remove all password from config files
-3. shogun-cloud -> shogun
+~3. shogun-cloud -> shogun~
 4. geoserver
 5. update templates and values with newer version (already updated: _helpers, ingress, service)
 5. ingress:
-   1. / -> shogun-client
+   1. /shogun-client/ -> shogun-client
    2. /shogun-admin/ -> shogun-admin
    3. /shogun-boot/ -> shogun-boot
    4. /keycloak/ -> keycloak
