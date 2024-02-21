@@ -38,6 +38,8 @@ kubectl create secret generic keycloakcred --from-literal=username=admin --from-
 cd charts/shogun-cloud
 helm dependency build
 helm install shogun-cloud ./ --values ./values.yaml
+
+
 kubectl port-forward service/shogun-cloud-keycloak 1234:https
 kubectl port-forward service/shogun-cloud-shogun-boot 1235:http
 kubectl port-forward service/shogun-cloud-shogun-client 1236:http

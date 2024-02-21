@@ -15,19 +15,21 @@ service:
   port: 9010
 
 ingress:
-  enabled: true
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    kubernetes.io/tls-acme: "true"
-    cert-manager.io/cluster-issuer: vault-issuer
-    nginx.ingress.kubernetes.io/enable-cors: "true"
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    # nginx.ingress.kubernetes.io/enable-cors: "true"
   hosts:
-    - host: shogun-boot.example.com
-      paths: [ "/" ]
-  tls:
-    - secretName: shogun-boot-tls
-      hosts:
-        - shogun-boot.example.com
+    - host: shogun.local
+      paths:
+        - path: /shogun-boot/
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: shogun-tls
+  #    hosts:
+  #      - shogun.local
 
 resources:
   limits:

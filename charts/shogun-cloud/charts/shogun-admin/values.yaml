@@ -15,18 +15,20 @@ service:
   port: 80
 
 ingress:
-  enabled: true
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    kubernetes.io/tls-acme: "true"
-    cert-manager.io/cluster-issuer: vault-issuer
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: shogun-admin.example.com
-      paths: [ "/" ]
-  tls:
-    - secretName: shogun-admin-tls
-      hosts:
-        - shogun-admin.example.com
+    - host: shogun.local
+      paths:
+        - path: /shogun-admin/
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: shogun-tls
+  #    hosts:
+  #      - shogun.local
 
 resources:
   limits:

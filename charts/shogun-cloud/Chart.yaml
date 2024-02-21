@@ -15,22 +15,24 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 1.0.9
+version: 1.0.0
 dependencies:
   - name: postgis
     version: "1.2.2"
-    repository: "file://../postgis"
+    repository: "https://terrestris.github.io/helm-charts"
+    condition: postgis.enabled
   - name: keycloak
     version: "18.4.0"
     repository: "https://charts.bitnami.com/bitnami"
+    condition: keycloak.enabled
   - name: shogun-boot
-    version: "1.0.0"
-    repository: "file://../shogun-boot"
+    version: "*"
+    condition: shogun-boot.enabled
   - name: shogun-admin
-    version: "1.0.0"
-    repository: "file://../shogun-admin"
+    version: "*"
+    condition: shogun-admin.enabled
   - name: shogun-client
-    version: "1.0.0"
-    repository: "file://../shogun-client"
+    version: "*"
+    condition: shogun-client.enabled
 
 # TODO: Add geoserver
