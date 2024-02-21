@@ -26,28 +26,6 @@ keycloak:
 postgis:
   enabled: true
 
-shogun-boot:
-  enabled: true
-  ingress:
-    enabled: false
-    className: ""
-    annotations: { }
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-    hosts:
-      - host: shogun.local
-        paths:
-          - path: /shogun-boot/
-            pathType: ImplementationSpecific
-    tls: [ ]
-    #  - secretName: shogun-tls
-    #    hosts:
-    #      - shogun.local
-  postgres:
-    host: shogun-cloud-postgis.default.svc.cluster.local
-  keycloak:
-    host: shogun-cloud-keycloak.default.svc.cluster.local
-
 shogun-admin:
   enabled: true
   ingress:
@@ -69,6 +47,28 @@ shogun-admin:
     host: localhost:1234/
   shogun:
     base: http://localhost:1235/
+
+shogun-boot:
+  enabled: true
+  ingress:
+    enabled: false
+    className: ""
+    annotations: { }
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: shogun.local
+        paths:
+          - path: /shogun-boot/
+            pathType: ImplementationSpecific
+    tls: [ ]
+    #  - secretName: shogun-tls
+    #    hosts:
+    #      - shogun.local
+  postgres:
+    host: shogun-postgis.default.svc.cluster.local
+  keycloak:
+    host: shogun-keycloak.default.svc.cluster.local
 
 shogun-client:
   enabled: true
