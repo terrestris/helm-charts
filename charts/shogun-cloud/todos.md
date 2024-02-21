@@ -3,6 +3,7 @@
    1. remove all password from config files
 3. shogun-cloud -> shogun
 4. geoserver
+5. update templates and values with newer version (already updated: _helpers, ingress, service)
 5. ingress:
    1. / -> shogun-client
    2. /shogun-admin/ -> shogun-admin
