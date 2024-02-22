@@ -1,23 +1,35 @@
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "shogun-boot.fullname" . }}
   labels:
-{{ include "shogun-boot.labels" . | indent 4 }}
+    {{- include "shogun-boot.labels" . | nindent 4 }}
 spec:
+  {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
+  {{- end }}
   selector:
     matchLabels:
-{{ include "shogun-boot.selectorLabels" . | indent 6 }}
+      {{- include "shogun-boot.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       labels:
         {{- if .Values.logs.enabled }}
         fluentd: "true"
         {{- end }}
-{{ include "shogun-boot.labels" . | indent 8 }}
+        {{- include "shogun-boot.labels" . | nindent 8 }}
     spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "shogun-boot.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       initContainers:
         - name: check-db-ready
           image: {{ .Values.postgresInitImage }}
@@ -44,7 +56,9 @@ spec:
                   key: password
       containers:
         - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: DB_USER
@@ -94,6 +108,7 @@ spec:
             httpGet:
               path: /
               port: http
+            initialDelaySeconds: 60
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
@@ -103,6 +118,9 @@ spec:
             - name: log4j2-config-volume
               mountPath: /config/log4j2.yml
               subPath: log4j2.yml
+            {{- with .Values.extraVolumeMounts }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
       volumes:
         - name: config-volume
           configMap:
@@ -123,14 +141,9 @@ spec:
             items:
               - key: init-sh
                 path: "init.sh"
-      {{- range .Values.hostAliases }}
-      hostAliases:
-        - ip: {{ .ip | quote }}
-          hostnames:
-            {{- range .hostnames }}
-            - {{ .hostname }}
-            {{- end }}
-      {{- end }}
+        {{- with .Values.extraVolumes }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

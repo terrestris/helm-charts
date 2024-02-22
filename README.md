@@ -33,7 +33,7 @@ Please note: changes in `README.md` are ignored.
 # first we need to build a container containing the default realm settings
 docker build -t keycloak-data:1.0 data/keycloak/
 kind load docker-image --name kind-dev-cluster keycloak-data:1.0 docker.terrestris.de/postgis/postgis:15-3.3-alpine docker-public.terrestris.de/terrestris/shogun-admin:11.4.0 docker-public.terrestris.de/shogun/shogun-boot:18.0.0 docker-public.terrestris.de/terrestris/shogun-gis-client:6.9.0
-kubectl create secret generic postgis-credentials --from-literal=username=postgres --from-literal=password=postgres
+kubectl create secret generic postgres-credentials --from-literal=username=postgres --from-literal=password=postgres
 kubectl create secret generic keycloak-credentials --from-literal=username=admin --from-literal=password=admin
 cd charts/shogun
 helm dependency build
