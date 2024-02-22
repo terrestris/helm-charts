@@ -1,26 +1,40 @@
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "shogun-client.fullname" . }}
   labels:
-{{ include "shogun-client.labels" . | indent 4 }}
+    {{- include "shogun-client.labels" . | nindent 4 }}
 spec:
+  {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
+  {{- end }}
   selector:
     matchLabels:
-{{ include "shogun-client.selectorLabels" . | indent 6 }}
+      {{- include "shogun-client.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       labels:
         {{- if .Values.logs.enabled }}
         fluentd: "true"
         {{- end }}
-{{ include "shogun-client.labels" . | indent 8 }}
+        {{- include "shogun-client.labels" . | nindent 8 }}
     spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "shogun-client.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
@@ -35,12 +49,16 @@ spec:
             httpGet:
               path: /
               port: http
+            initialDelaySeconds: 60
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
             - name: config-volume
               mountPath: "/usr/share/nginx/html/gis-client-config.js"
               subPath: gis-client-config.js
+            {{- with .Values.extraVolumeMounts }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
       volumes:
         - name: config-volume
           configMap:
@@ -48,21 +66,12 @@ spec:
             items:
               - key: gis-client-config
                 path: "gis-client-config.js"
-      {{- with .Values.image.pullSecret }}
-      imagePullSecrets:
-        - name: {{ .Values.image.pullSecret }}
-      {{- end }}
+        {{- with .Values.extraVolumes }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- range .Values.hostAliases }}
-      hostAliases:
-        - ip: {{ .ip | quote }}
-          hostnames:
-            {{- range .hostnames }}
-            - {{ .hostname }}
-            {{- end }}
       {{- end }}
       {{- with .Values.affinity }}
       affinity:
