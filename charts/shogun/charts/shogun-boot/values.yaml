@@ -111,6 +111,8 @@ keycloak:
   clientId: shogun-boot
   masterrealm: SHOGun
   adminClientId: admin-cli
+  userName: admin
+  passwordSecret: shogun-keycloak
 
 shogun:
   additionalJavaArgs: -Xms512m -Xmx512m -Djdk.serialSetFilterAfterRead=true -Dspring.config.location=/config/application.yml -Dlog4j2.configurationFile=file:/config/log4j2.yml
