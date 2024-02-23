@@ -72,15 +72,12 @@ spec:
                   name: postgres-credentials
                   key: password
             - name: KEYCLOAK_USER
-              valueFrom:
-                secretKeyRef:
-                  name: keycloak-credentials
-                  key: username
+              value: {{ .Values.keycloak.userName }}
             - name: KEYCLOAK_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: keycloak-credentials
-                  key: password
+                  name: {{ .Values.keycloak.passwordSecret }}
+                  key: admin-password
             {{- if .Values.mail.enabled }}
             - name: MAIL_USER
               valueFrom:
