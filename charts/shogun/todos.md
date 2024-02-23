@@ -20,7 +20,8 @@
 7. provide default values in values.yaml of subcharts ✅
 8. provide default values in values.yaml of main chart
 9. add comments to values.yml in subcharts and main chart
-9. squash all commits in merge
+10. remove test folder ✅
+11. squash all commits in merge
 
 ingress locally:
     0. enable ingress
