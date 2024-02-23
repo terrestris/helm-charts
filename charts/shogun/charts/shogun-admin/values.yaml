@@ -98,17 +98,17 @@ tolerations: []
 affinity: {}
 
 shogun:
-  appPrefix: ""
-  base: https://shogun-boot.example.com
+  appPrefix: "/shogun-admin"
+  base: "/shogun-boot"
 
 keycloak:
-  host: keycloak.example.com
+  host: "shogun.local/keycloak"
   realm: SHOGun
   clientId: shogun-admin
   authorizedAdminRole: admin
 
 client:
-  base: https://shogun-client.example.com
+  base: "/shogun-client"
 
 geoserver:
   url: https://geoserver.example.com

@@ -85,16 +85,16 @@ data:
         <title>SHOGun admin</title>
         <base href="/" />
         <link rel="icon" href="favicon.ico?13e260e94e2e3f8104da" />
-        <script defer="defer" src="js/main.bundle.js?13e260e94e2e3f8104da"></script>
+        <script defer="defer" src="{{ .Values.shogun.appPrefix }}/js/main.bundle.js?13e260e94e2e3f8104da"></script>
       </head>
       <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>
         <div id="app" class="app" style="height: 100%; width: 100%;"></div>
-        <script src="./config/admin-client-config.js"></script>
+        <script src="{{ .Values.shogun.appPrefix }}/config/admin-client-config.js"></script>
         <script>
           if (!window.shogunApplicationConfig) {
             console.warn("No SHOGun application config found. Loading fallback.");
-            document.write('<script src="./fallbackConfig.js">\x3C/script>');
+            document.write('<script src="{{ .Values.shogun.appPrefix }}/fallbackConfig.js"></script>');
           }
         </script>
       </body>
@@ -391,4 +391,3 @@ data:
         ]
       }
     }
-
