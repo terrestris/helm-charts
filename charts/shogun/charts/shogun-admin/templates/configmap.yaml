@@ -9,8 +9,8 @@ data:
     var shogunApplicationConfig = {
       appPrefix: '{{ .Values.shogun.appPrefix }}',
       path: {
-        modelConfigs: './modelconfigs',
-        shogunBase: '{{ .Values.shogun.base }}',
+        modelConfigs: '{{ .Values.shogun.appPrefix }}/modelconfigs',
+        shogunBase: '{{ .Values.shogun.base }}/',
         logo: null
       },
       security: {
@@ -83,7 +83,7 @@ data:
         <meta charset="utf-8" />
         <meta name="viewport" content="user-scalable=no,width=device-width,initial-scale=1,shrink-to-fit=no" />
         <title>SHOGun admin</title>
-        <base href="/" />
+        <base href="./" />
         <link rel="icon" href="favicon.ico?13e260e94e2e3f8104da" />
         <script defer="defer" src="{{ .Values.shogun.appPrefix }}/js/main.bundle.js?13e260e94e2e3f8104da"></script>
       </head>
@@ -94,7 +94,7 @@ data:
         <script>
           if (!window.shogunApplicationConfig) {
             console.warn("No SHOGun application config found. Loading fallback.");
-            document.write('<script src="{{ .Values.shogun.appPrefix }}/fallbackConfig.js"></script>');
+            document.write('<script src="{{ .Values.shogun.appPrefix }}/fallbackConfig.js"><\/script>');
           }
         </script>
       </body>
@@ -141,7 +141,7 @@ data:
           "toolTipLink": "Open instance"
         }
       },
-      "endpoint": "{{ .Values.shogun.base }}applications",
+      "endpoint": "{{ .Values.shogun.base }}/applications",
       "entityType": "application",
       "entityName": "#i18n.entityName",
       "navigationTitle": "#i18n.navigationTitle",
@@ -295,7 +295,7 @@ data:
           "titlePrev": "Layer preview"
         }
       },
-      "endpoint": "{{ .Values.shogun.base }}layers",
+      "endpoint": "{{ .Values.shogun.base }}/layers",
       "entityType": "layer",
       "entityName": "#i18n.entityName",
       "navigationTitle": "#i18n.navigationTitle",
