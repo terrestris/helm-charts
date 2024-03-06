@@ -48,6 +48,7 @@ environment:
 
 storage:
   dataDir: /opt/geoserver_data
+  # https://github.com/terrestris/shogun-docker/tree/main/shogun-geoserver/additional_libs
   additionalLibsDir: /opt/additional_libs
   # initDataUrl: https://files.example.com/geoserver_data.tgz
 

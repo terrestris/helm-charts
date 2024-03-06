@@ -97,7 +97,7 @@ tolerations: []
 affinity: {}
 
 keycloak:
-  host: shogun-keycloak
+  host: "shogun.local/keycloak"
   realm: SHOGun
   clientId: shogun-client
   onLoadAction: login-required

@@ -15,7 +15,7 @@ data:
       port: 8080
       # this flag is needed to properly redirect to https:
       forward-headers-strategy: framework
-      max-http-header-size: 64KB
+      max-http-header-size: 128KB
       servlet:
         context-path: /
       error:
@@ -85,7 +85,7 @@ data:
         locations: classpath:db/migration
         defaultSchema: shogun
         schemas: shogun, public
-        outOfOrder: true
+        outOfOrder: false
       datasource:
         platform: postgres
         url: jdbc:postgresql://{{ .Values.postgres.host }}/{{ .Values.postgres.name }}?currentSchema={{ .Values.postgres.schema }}
@@ -114,15 +114,15 @@ data:
         oauth2:
           resourceserver:
             jwt:
-              issuer-uri: https://{{ .Values.keycloak.host }}/auth/realms/{{ .Values.keycloak.realm }}
-              jwk-set-uri: https://{{ .Values.keycloak.host }}/auth/realms/{{ .Values.keycloak.realm }}/protocol/openid-connect/certs
+              issuer-uri: {{ .Values.keycloak.url }}/realms/{{ .Values.keycloak.realm }}
+              jwk-set-uri: {{ .Values.keycloak.url }}/realms/{{ .Values.keycloak.realm }}/protocol/openid-connect/certs
       graphql:
         graphiql:
           enabled: {{ .Values.debug.graphiql }}
 
     keycloak:
       enabled: true
-      server-url: https://{{ .Values.keycloak.host }}/auth
+      server-url: {{ .Values.keycloak.url }}
       username: ${KEYCLOAK_USER}
       password: ${KEYCLOAK_PASSWORD}
       master-realm: {{ .Values.keycloak.masterRealm }}
