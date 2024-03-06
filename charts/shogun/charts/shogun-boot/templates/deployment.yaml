@@ -98,12 +98,12 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /
+              path: /info/app
               port: http
             initialDelaySeconds: 60
           readinessProbe:
             httpGet:
-              path: /
+              path: /info/app
               port: http
             initialDelaySeconds: 60
           resources:
