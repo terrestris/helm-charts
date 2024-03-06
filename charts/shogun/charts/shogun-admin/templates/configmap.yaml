@@ -255,7 +255,7 @@ data:
             "cellRenderComponentName": "LinkCell",
             "cellRenderComponentProps": {
               "title": "#i18n.toolTipLink",
-              "template": "{{ .Values.client.base }}client?applicationId={}"
+              "template": "{{ .Values.client.base }}/?applicationId={}"
             }
           }
         ]
