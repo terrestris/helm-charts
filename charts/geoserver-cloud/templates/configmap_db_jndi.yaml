@@ -21,4 +21,3 @@ kind: ConfigMap
 metadata:
   creationTimestamp: null
   name: cm-jndi-geodata
-  
