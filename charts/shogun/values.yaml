@@ -1,0 +1,103 @@
+shogun-admin:
+  enabled: true
+  ingress:
+    enabled: true
+    className: ""
+    annotations:
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/rewrite-target: /$2
+    hosts:
+      - host: shogun.local
+        paths:
+          - path: /shogun-admin(/|$)(.*)
+            pathType: Prefix
+    tls: []
+    #  - secretName: shogun-tls
+    #    hosts:
+    #      - shogun.local
+  geoserver:
+    url: "http://shogun.local/geoserver"
+  keycloak:
+    host: "shogun.local/keycloak"
+  shogun:
+    base: /shogun-boot
+
+shogun-boot:
+  enabled: true
+  ingress:
+    enabled: true
+    className: ""
+    annotations: { }
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: shogun.local
+        paths:
+          - path: /shogun-boot/
+            pathType: ImplementationSpecific
+    tls: [ ]
+    #  - secretName: shogun-tls
+    #    hosts:
+    #      - shogun.local
+  postgres:
+    host: shogun-postgis.default.svc.cluster.local
+  keycloak:
+    host: shogun-keycloak.default.svc.cluster.local
+
+shogun-client:
+  enabled: true
+  ingress:
+    enabled: true
+    className: ""
+    annotations:
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/rewrite-target: /$2
+    hosts:
+      - host: shogun.local
+        paths:
+          - path: /shogun-client(/|$)(.*)
+            pathType: Prefix
+    tls: []
+    #  - secretName: shogun-tls
+    #    hosts:
+    #      - shogun.local
+
+postgis:
+  enabled: true
+
+geoserver:
+  enabled: true
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+      nginx.ingress.kubernetes.io/enable-cors: "true"
+    hosts:
+      - host: shogun.local
+        paths: [ "/geoserver" ]
+    tls: []
+      # - secretName: geoserver-secret
+      #   hosts:
+      #     - shogun.local
+
+keycloak:
+  enabled: true
+  production: true
+  proxy: edge
+  extraEnvVars:
+    - name: KEYCLOAK_EXTRA_ARGS
+      value: '--import-realm'
+  initContainers:
+    - name: keycloak-data-container
+      image: docker-public.terrestris.de/shogun/keycloak-data:1.0
+      command: ['cp', '/keycloak_export.json', '/share']
+      volumeMounts:
+        - name: realm-import
+          mountPath: "/share"
+  extraVolumes:
+    - name: realm-import
+      emptyDir: {}
+  extraVolumeMounts:
+    - name: realm-import
+      mountPath: /opt/bitnami/keycloak/data/import
