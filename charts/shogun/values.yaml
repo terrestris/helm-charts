@@ -41,6 +41,8 @@ shogun-boot:
     #      - shogun.local
   postgres:
     host: shogun-postgis.default.svc.cluster.local
+    credentialsSecret: shogun-postgis-shogun-credentials
+    credentialsSecretKeyPassword: shogun-password
   keycloak:
     host: shogun-keycloak.default.svc.cluster.local
 
@@ -93,6 +95,8 @@ keycloak:
   enabled: true
   production: true
   proxy: edge
+  postgresql:
+    enabled: false
   extraEnvVars:
     - name: KEYCLOAK_EXTRA_ARGS
       value: '--import-realm'
@@ -110,7 +114,7 @@ keycloak:
     - name: realm-import
       mountPath: /opt/bitnami/keycloak/data/import
   externalDatabase:
-    host: shogun-postgis
+    host: shogun-postgis.default.svc.cluster.local
     user: keycloak
     database: keycloak
     existingSecret: shogun-postgis-keycloak-credentials

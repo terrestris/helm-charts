@@ -97,13 +97,16 @@ tolerations: []
 
 affinity: {}
 
-postgresInitImage: docker.terrestris.de/postgis/postgis:15-3.3-alpine
+postgresInitImage: docker.terrestris.de/postgis/postgis:16-3.4-alpine
 
 postgres:
   host: postgis.default.svc.cluster.local
   port: 5432
-  name: shogun
+  databasename: shogun
   schema: shogun
+  username: shogun
+  credentialsSecret: postgres-credentials
+  credentialsSecretKeyPassword: password
 
 keycloak:
   url: https://example.com/auth

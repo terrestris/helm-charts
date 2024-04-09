@@ -38,22 +38,18 @@ spec:
             do echo waiting for database; sleep 2; done;']
         - name: check-db
           image: {{ .Values.postgresInitImage }}
-          command: ['sh', '-c',
-            '/script/init.sh']
+          command: ['sh', '-c', '/script/init.sh']
           volumeMounts:
             - name: init
               mountPath: "/script"
           env:
             - name: DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: postgres-credentials
-                  key: username
+              value: {{ .Values.postgres.username }}
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgres-credentials
-                  key: password
+                  name: {{ .Values.postgres.credentialsSecret }}
+                  key: {{ .Values.postgres.credentialsSecretKeyPassword }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -62,15 +58,12 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: postgres-credentials
-                  key: username
+              value: {{ .Values.postgres.username }}
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgres-credentials
-                  key: password
+                  name: {{ .Values.postgres.credentialsSecret }}
+                  key: {{ .Values.postgres.credentialsSecretKeyPassword }}
             - name: KEYCLOAK_USER
               value: {{ .Values.keycloak.userName }}
             - name: KEYCLOAK_PASSWORD
