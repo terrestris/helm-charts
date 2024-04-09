@@ -5,19 +5,25 @@ metadata:
 {{ include "postgis.labels" . | indent 4 }}
   name: {{ include "postgis.fullname" . }}
 data:
-  {{- if .Values.postgres.conf }}
+  {{- with .Values.postgres.conf }}
   postgresql.conf: |-
 {{ .Values.postgres.conf | indent 4 }}
   {{- end }}
+  {{- if .Values.postgres.customInit.enabled }}
+  init-additional-user.sh: |-
+    #!/bin/bash
+    set -e
+    PGPASSWORD=$POSTGRES_PASSWORD
+    psql -U {{ .Values.postgres.username }} -c "CREATE ROLE {{ .Values.postgres.customInit.username }} LOGIN PASSWORD '$CUSTOM_USER_PASSWORD';"
   init.sql: |-
-    CREATE ROLE {{ .Values.postgres.customInit.user }} WITH SUPERUSER LOGIN PASSWORD '{{ .Values.postgres.customInit.password }}';
     {{- range .Values.postgres.customInit.databases }}
-    CREATE DATABASE {{ . }} OWNER {{ $.Values.postgres.customInit.user }};
+    CREATE DATABASE {{ . }} OWNER {{ $.Values.postgres.customInit.username }};
     {{- end }}
+  {{- end }}
   init-data.sh: |-
     #!/bin/sh
     set -e
-    if ls /docker-entrypoint-initdb.d/* 1> /dev/null 2>&1; then
+    if ls /docker-entrypoint-initdb.d/*.sql 1> /dev/null 2>&1; then
       echo "DB already initialized. Exiting."
       exit 0
     fi

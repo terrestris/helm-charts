@@ -45,20 +45,30 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          ports:
-            - containerPort: 5432
-              name: postgres
-              protocol: TCP
-          {{- if .Values.postgres.conf }}
+          {{- with .Values.postgres.conf }}
           args: ["-c", "config_file=/etc/postgresql/postgresql.conf"]
           {{- end }}
           env:
+            - name: POSTGRES_HOST_AUTH_METHOD
+              value: "scram-sha-256"
+            - name: POSTGRES_INITDB_ARGS
+              value: "--auth-host=scram-sha-256"
             - name: POSTGRES_PASSWORD
-              value: "{{ .Values.postgres.password }}"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "postgis.fullname" . }}-{{ .Values.postgres.username }}-credentials
+                  key: {{ .Values.postgres.username }}-password
             - name: POSTGRES_USER
-              value: "{{ .Values.postgres.user }}"
+              value: {{ .Values.postgres.username }}
             - name: POSTGRES_DB
-              value: "{{ .Values.postgres.db }}"
+              value: {{ .Values.postgres.database }}
+            {{- if .Values.postgres.customInit.enabled }}
+            - name: CUSTOM_USER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "postgis.fullname" . }}-{{ .Values.postgres.customInit.username }}-credentials
+                  key: custom-user-password
+            {{- end }}
             {{- with .Values.extraEnv }}
             {{- tpl . $ | nindent 12 }}
             {{- end }}
@@ -72,7 +82,7 @@ spec:
               command:
               - sh
               - -c
-              - exec pg_isready -U "{{ .Values.postgres.user }}" -h 127.0.0.1 -p 5432 -t "{{ .Values.livenessProbe.timeoutSeconds }}"
+              - exec pg_isready -U "{{ .Values.postgres.username }}" -h 127.0.0.1 -p 5432 -t "{{ .Values.livenessProbe.timeoutSeconds }}"
             timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
             initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
           {{- end }}
@@ -82,7 +92,7 @@ spec:
               command:
               - sh
               - -c
-              - exec pg_isready -U "{{ .Values.postgres.user }}" -h 127.0.0.1 -p 5432 -t "{{ .Values.readinessProbe.timeoutSeconds }}"
+              - exec pg_isready -U "{{ .Values.postgres.username }}" -h 127.0.0.1 -p 5432 -t "{{ .Values.readinessProbe.timeoutSeconds }}"
             timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
             initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
           {{- end }}
@@ -92,7 +102,7 @@ spec:
               command:
               - sh
               - -c
-              - exec pg_isready -U "{{ .Values.postgres.user }}" -h 127.0.0.1 -p 5432 -t "{{ .Values.startupProbe.timeoutSeconds }}"
+              - exec pg_isready -U "{{ .Values.postgres.username }}" -h 127.0.0.1 -p 5432 -t "{{ .Values.startupProbe.timeoutSeconds }}"
             initialDelaySeconds: {{ .Values.startupProbe.initialDelaySeconds }}
             timeoutSeconds: {{ .Values.startupProbe.timeoutSeconds }}
             failureThreshold: {{ .Values.startupProbe.failureThreshold }}
@@ -142,6 +152,8 @@ spec:
             items:
               - key: init.sql
                 path: init.sql
+              - key: init-additional-user.sh
+                path: init-additional-user.sh
         {{- end }}
         {{- if and .Values.persistence.enabled (not .Values.persistence.useExisting) }}
         - name: datadir
