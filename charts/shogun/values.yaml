@@ -64,6 +64,14 @@ shogun-client:
 
 postgis:
   enabled: true
+  postgres:
+    database: shogun
+    username: shogun
+    customInit:
+      enabled: true
+      username: keycloak
+      databases:
+        - keycloak
 
 geoserver:
   enabled: true
@@ -101,6 +109,12 @@ keycloak:
   extraVolumeMounts:
     - name: realm-import
       mountPath: /opt/bitnami/keycloak/data/import
+  externalDatabase:
+    host: shogun-postgis
+    user: keycloak
+    database: keycloak
+    existingSecret: shogun-postgis-keycloak-credentials
+    existingSecretPasswordKey: custom-user-password
 
 mapfish-print:
   enabled: true
