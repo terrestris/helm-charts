@@ -31,18 +31,18 @@ tolerations: []
 affinity: {}
 
 postgres:
-  user: postgres
-  password: postgres
-  db: postgres
+  database: postgres
+  username: postgres
+  existingSecret:
+    enabled: false
   # conf: |
   #   listen_addresses = '*'
   #   jit = off
   customInit:
     enabled: false
-    # user: my_user
-    # password: my_password
-    # databases:
-    #   - my_database
+    username: my-user
+    databases:
+      - my-database
 
 persistence:
   enabled: false
@@ -54,7 +54,7 @@ persistence:
 
 dataImport:
   enabled: false
-  # initDataUrl: https://files.example.com/postgresql_data.tar.gz
+  initDataUrl: https://files.example.com/postgresql_data.tar.gz
 
 # extraInitEnvFrom: |
 #   - secretRef:

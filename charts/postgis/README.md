@@ -1,6 +1,8 @@
 # Helm chart for PostGIS
 
-Helm chart that uses the [`docker.terrestris.de/postgis/postgis`](https://docker.terrestris.de/postgis/postgis) docker image for Kubernetes cluster deployments. The PostGIS version can be defined in the `Chart.yaml` file by setting `appVersion`.
+Helm chart that uses the [`docker.terrestris.de/postgis/postgis`](https://docker.terrestris.de/postgis/postgis) docker image for Kubernetes cluster deployments.
+The PostGIS version can be defined in the `Chart.yaml` file by setting `appVersion`.
+By default, a secret `mydeployment-postgres-credentials` is created containing a random password for the database admin user `postgres` given in `{{ .Values.postgres.username }}`.
 
 The following parameters can be configured in `values.yaml`:
 
