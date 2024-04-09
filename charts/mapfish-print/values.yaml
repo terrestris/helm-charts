@@ -37,7 +37,6 @@ resources:
     memory: 2Gi
   requests:
     cpu: 100m
-    memory: 2Gi
 
 nodeSelector: {}
 

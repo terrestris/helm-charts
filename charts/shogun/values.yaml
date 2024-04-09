@@ -101,3 +101,6 @@ keycloak:
   extraVolumeMounts:
     - name: realm-import
       mountPath: /opt/bitnami/keycloak/data/import
+
+mapfish-print:
+  enabled: true
