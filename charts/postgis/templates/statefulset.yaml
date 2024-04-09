@@ -45,6 +45,10 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: postgres
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
           {{- with .Values.postgres.conf }}
           args: ["-c", "config_file=/etc/postgresql/postgresql.conf"]
           {{- end }}
