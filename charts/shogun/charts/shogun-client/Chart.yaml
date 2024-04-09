@@ -1,5 +1,5 @@
 apiVersion: v2
-appVersion: 6.9.0
+appVersion: 7.5.1
 description: Helm chart for SHOGun-GIS-Client
 name: shogun-client
 version: 1.0.0
