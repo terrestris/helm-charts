@@ -54,15 +54,18 @@ spec:
             - name: config-volume
               mountPath: "/var/www/html/config/admin-client-config.js"
               subPath: admin-client-config.js
-            - name: index-html-volume
-              mountPath: "/var/www/html/index.html"
-              subPath: index.html
             - name: application-config-volume
               mountPath: "/var/www/html/modelconfigs/application.json"
               subPath: application.json
             - name: layer-config-volume
               mountPath: "/var/www/html/modelconfigs/layer.json"
               subPath: layer.json
+            - name: user-config-volume
+              mountPath: "/var/www/html/modelconfigs/user.json"
+              subPath: user.json
+            - name: group-config-volume
+              mountPath: "/var/www/html/modelconfigs/group.json"
+              subPath: group.json
             {{- with .Values.extraVolumeMounts }}
               {{- toYaml . | nindent 12 }}
             {{- end }}
@@ -85,12 +88,18 @@ spec:
             items:
               - key: layer-config
                 path: "layer.json"
-        - name: index-html-volume
+        - name: user-config-volume
           configMap:
             name: {{ include "shogun-admin.fullname" . }}
             items:
-              - key: index-html
-                path: "index.html"
+              - key: user-config
+                path: "user.json"
+        - name: group-config-volume
+          configMap:
+            name: {{ include "shogun-admin.fullname" . }}
+            items:
+              - key: group-config
+                path: "group.json"
         {{- with .Values.extraVolumes }}
           {{- toYaml . | nindent 8 }}
         {{- end }}

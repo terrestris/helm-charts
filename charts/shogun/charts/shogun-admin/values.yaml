@@ -98,7 +98,7 @@ tolerations: []
 affinity: {}
 
 shogun:
-  appPrefix: "/shogun-admin"
+  appPrefix: "/admin"
   base: "/shogun-boot"
 
 keycloak:
@@ -108,7 +108,7 @@ keycloak:
   authorizedAdminRole: admin
 
 client:
-  base: "/shogun-client"
+  base: "/client"
 
 geoserver:
   url: https://geoserver.example.com

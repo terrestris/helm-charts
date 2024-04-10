@@ -33,23 +33,25 @@ data:
       },
       models: [
         'Application',
-        'Layer'
+        'Layer',
+        'User',
+        'Group'
       ],
       dashboard: {
         news: {
           visible: true
         },
         statistics: {
-          visible: false
+          visible: true
         },
         applications: {
-          visible: false
+          visible: true
         },
         layers: {
           visible: true
         },
         users: {
-          visible: false
+          visible: true
         }
       },
       navigation: {
@@ -76,29 +78,6 @@ data:
         }
       }
     };
-  index-html: |-
-    <!DOCTYPE html>
-    <html lang="de">
-      <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="user-scalable=no,width=device-width,initial-scale=1,shrink-to-fit=no" />
-        <title>SHOGun admin</title>
-        <base href="{{ .Values.shogun.appPrefix }}/" />
-        <link rel="icon" href="favicon.ico?13e260e94e2e3f8104da" />
-        <script defer="defer" src="{{ .Values.shogun.appPrefix }}/js/main.bundle.js?13e260e94e2e3f8104da"></script>
-      </head>
-      <body>
-        <noscript>You need to enable JavaScript to run this app.</noscript>
-        <div id="app" class="app" style="height: 100%; width: 100%;"></div>
-        <script src="{{ .Values.shogun.appPrefix }}/config/admin-client-config.js"></script>
-        <script>
-          if (!window.shogunApplicationConfig) {
-            console.warn("No SHOGun application config found. Loading fallback.");
-            document.write('<script src="{{ .Values.shogun.appPrefix }}/fallbackConfig.js"><\/script>');
-          }
-        </script>
-      </body>
-    </html>
   application-config: |-
     {
       "i18n": {
@@ -387,6 +366,246 @@ data:
             "title": "#i18n.titlePrev",
             "key": "preview",
             "cellRenderComponentName": "LayerPreviewCell"
+          }
+        ]
+      }
+    }
+  user-config: |-
+    {
+      "i18n": {
+        "de": {
+          "entityName": "Benutzer",
+          "navigationTitle": "Benutzer",
+          "labelId": "ID",
+          "labelEstabl": "Erstellt am",
+          "labelEdit": "Zuletzt editiert am",
+          "labelKey": "Keycloak ID",
+          "labelKeyProvDetail": "Keycloak Details",
+          "labelKeyDetail": "Details",
+          "labelSource": "Datenquelle",
+          "titleId": "ID",
+          "titleKeyId": "Keycloak ID",
+          "userDoesNotExistTitle": "Der Nutzer existiert nicht in Keycloak",
+          "titleLink": "Link zum Benutzer",
+          "titleOpen": "Öffne User in Keycloak"
+        },
+        "en": {
+          "entityName": "User",
+          "navigationTitle": "User",
+          "labelId": "ID",
+          "labelEstabl": "Created at",
+          "labelEdit": "Last edited on",
+          "labelKey": "Keycloak ID",
+          "labelKeyProvDetail": "Keycloak details",
+          "labelKeyDetail": "Details",
+          "labelSource": "Datasource",
+          "titleId": "ID",
+          "titleKeyId": "Keycloak ID",
+          "userDoesNotExistTitle": "User does not exist in Keycloak",
+          "titleLink": "Link to user",
+          "titleOpen": "Open user in Keycloak"
+        }
+      },
+      "endpoint": "/users",
+      "entityType": "user",
+      "entityName": "#i18n.entityName",
+      "navigationTitle": "#i18n.navigationTitle",
+      "subTitle": "",
+      "formConfig": {
+        "name": "user",
+        "fields": [
+          {
+            "dataType": "number",
+            "dataField": "id",
+            "label": "#i18n.labelId",
+            "readOnly": "true"
+          },
+          {
+            "dataField": "created",
+            "dataType": "date",
+            "readOnly": "true",
+            "component": "DateField",
+            "label": "#i18n.labelEstabl",
+            "fieldProps": {
+              "dateFormat": "DD.MM.YYYY HH:mm"
+            }
+          },
+          {
+            "dataField": "modified",
+            "dataType": "date",
+            "readOnly": "true",
+            "label": "#i18n.labelEdit",
+            "component": "DateField",
+            "fieldProps": {
+              "dateFormat": "DD.MM.YYYY HH:mm"
+            }
+          },
+          {
+            "component": "DisplayField",
+            "dataField": "authProviderId",
+            "label": "#i18n.labelKey"
+          },
+          {
+            "component": "JSONEditor",
+            "dataField": "providerDetails",
+            "label": "#i18n.labelKeyProvDetail",
+            "fieldProps": {}
+          },
+          {
+            "component": "JSONEditor",
+            "dataField": "details",
+            "label": "#i18n.labelKeyDetail",
+            "fieldProps": {}
+          },
+          {
+            "component": "JSONEditor",
+            "dataField": "clientConfig",
+            "label": "#i18n.labelSource",
+            "fieldProps": {}
+          }
+        ]
+      },
+      "tableConfig": {
+        "columnDefinition": [
+          {
+            "title": "#i18n.titleId",
+            "dataIndex": "id",
+            "sortConfig": {
+              "isSortable": false
+            }
+          },
+          {
+            "title": "#i18n.titleKeyId",
+            "dataIndex": "authProviderId",
+            "key": "authProviderId",
+            "cellRenderComponentName": "VerifyProviderDetailsCell",
+            "cellRenderComponentProps": {
+              "title": "#i18n.userDoesNotExistTitle"
+            },
+            "sortConfig": {
+              "isSortable": true
+            },
+            "filterConfig": {
+              "isFilterable": true
+            }
+          },
+          {
+            "title": "#i18n.titleLink",
+            "dataIndex": "authProviderId",
+            "key": "link",
+            "cellRenderComponentName": "LinkCell",
+            "cellRenderComponentProps": {
+              "title": "#i18n.titleOpen",
+              "template": "/auth/admin/master/console/#/SHOGun/users/{}/settings"
+            }
+          }
+        ]
+      }
+    }
+  group-config: |-
+    {
+      "i18n": {
+        "de": {
+          "entityName": "Gruppe",
+          "navigationTitle": "Gruppen",
+          "labelId": "ID",
+          "labelEstabl": "Erstellt am",
+          "labelEdit": "Zuletzt editiert am",
+          "labelKey": "Keycloak ID",
+          "titleId": "ID",
+          "titleKeyId": "Keycloak ID",
+          "userDoesNotExistTitle": "Die Gruppe existiert nicht in Keycloak",
+          "titleLink": "Link zur Gruppe",
+          "titleGroup": "Öffne Gruppe in Keycloak"
+        },
+        "en": {
+          "entityName": "Group",
+          "navigationTitle": "Groups",
+          "labelId": "ID",
+          "labelEstabl": "Created at",
+          "labelEdit": "Last edited on",
+          "labelKey": "Keycloak ID",
+          "titleId": "ID",
+          "titleKeyId": "Keycloak ID",
+          "userDoesNotExistTitle": "Group does not exist in Keycloak",
+          "titleLink": "Link to group",
+          "titleGroup": "Open group in Keycloak"
+        }
+      },
+      "endpoint": "/groups",
+      "entityType": "group",
+      "entityName": "#i18n.entityName",
+      "navigationTitle": "#i18n.navigationTitle",
+      "subTitle": "",
+      "formConfig": {
+        "name": "group",
+        "fields": [
+          {
+            "dataType": "number",
+            "dataField": "id",
+            "label": "#i18n.labelId",
+            "readOnly": "true"
+          },
+          {
+            "dataField": "created",
+            "dataType": "date",
+            "readOnly": "true",
+            "component": "DateField",
+            "label": "#i18n.labelEstabl",
+            "fieldProps": {
+              "dateFormat": "DD.MM.YYYY HH:mm"
+            }
+          },
+          {
+            "dataField": "modified",
+            "dataType": "date",
+            "readOnly": "true",
+            "label": "#i18n.labelEdit",
+            "component": "DateField",
+            "fieldProps": {
+              "dateFormat": "DD.MM.YYYY HH:mm"
+            }
+          },
+          {
+            "component": "DisplayField",
+            "dataField": "authProviderId",
+            "label": "#i18n.labelKey"
+          }
+        ]
+      },
+      "tableConfig": {
+        "columnDefinition": [
+          {
+            "title": "#i18n.titleId",
+            "dataIndex": "id",
+            "sortConfig": {
+              "isSortable": false
+            }
+          },
+          {
+            "title": "#i18n.titleKeyId",
+            "dataIndex": "authProviderId",
+            "key": "authProviderId",
+            "cellRenderComponentName": "VerifyProviderDetailsCell",
+            "cellRenderComponentProps": {
+              "title": "#i18n.groupDoesNotExistTitle"
+            },
+            "sortConfig": {
+              "isSortable": true
+            },
+            "filterConfig": {
+              "isFilterable": true
+            }
+          },
+          {
+            "title": "#i18n.titleLink",
+            "dataIndex": "authProviderId",
+            "key": "link",
+            "cellRenderComponentName": "LinkCell",
+            "cellRenderComponentProps": {
+              "title": "#i18n.titleGroup",
+              "template": "/auth/admin/master/console/#/SHOGun/groups/{}/settings"
+            }
           }
         ]
       }

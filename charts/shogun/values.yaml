@@ -9,7 +9,7 @@ shogun-admin:
     hosts:
       - host: shogun.local
         paths:
-          - path: /shogun-admin(/|$)(.*)
+          - path: /admin(/|$)(.*)
             pathType: Prefix
     tls: []
     #  - secretName: shogun-tls
@@ -33,7 +33,7 @@ shogun-boot:
     hosts:
       - host: shogun.local
         paths:
-          - path: /shogun-boot/
+          - path: /
             pathType: ImplementationSpecific
     tls: [ ]
     #  - secretName: shogun-tls
@@ -57,7 +57,7 @@ shogun-client:
     hosts:
       - host: shogun.local
         paths:
-          - path: /shogun-client(/|$)(.*)
+          - path: /client(/|$)(.*)
             pathType: Prefix
     tls: []
     #  - secretName: shogun-tls
