@@ -43,3 +43,53 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end -}}
+
+{{/*
+This creates the defaultuser secretname from
+{{ include "postgis.fullname" . }}-{{ .Values.postgres.username }}-credentials
+e.g. shogun-postgis-keycloak-credentials
+*/}}
+{{- define "postgis.defaultuser.secretname" -}}
+{{- printf "%s-%s-credentials" (include "postgis.fullname" .) .Values.postgres.username | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{/*
+This creates the custom secretname from
+{{ include "postgis.fullname" . }}-{{ .Values.postgres.username }}-credentials
+e.g. shogun-postgis-custom-credentials
+*/}}
+{{- define "postgis.custominit.secretname" -}}
+{{- printf "%s-%s-credentials" (include "postgis.fullname" .) .Values.postgres.customInit.username | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{/*
+Allow the release namespace to be overridden for multi-namespace deployments in combined charts.
+*/}}
+{{- define "postgis.namespace" -}}
+{{- default .Release.Namespace .Values.namespaceOverride | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{/*
+Reuses the value from an existing secret, otherwise sets its value to a default value.
+
+Usage:
+{{ include "postgis.secrets.lookup" (dict "secret" "secret-name" "key" "keyName" "defaultValue" .Values.myValue) }}
+
+Params:
+  - secret - String - Required - Name of the 'Secret' resource where the password is stored.
+  - key - String - Required - Name of the key in the secret.
+  - defaultValue - String - Required - The path to the validating value in the values.yaml, e.g: "mysql.password". Will pick first parameter with a defined value.
+  - context - Context - Required - Parent context.
+*/}}
+{{- define "postgis.secrets.lookup" -}}
+{{- $value := "" -}}
+{{- $secretData := (lookup "v1" "Secret" (include "postgis.namespace" .context) .secret).data -}}
+{{- if and $secretData (hasKey $secretData .key) -}}
+  {{- $value = index $secretData .key -}}
+{{- else if .defaultValue -}}
+  {{- $value = .defaultValue | toString | b64enc -}}
+{{- end -}}
+{{- if $value -}}
+{{- printf "%s" $value -}}
+{{- end -}}
+{{- end -}}

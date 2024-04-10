@@ -6,8 +6,10 @@ icon: https://raw.githubusercontent.com/terrestris/shogun/main/shogun-boot/src/m
 version: 1.0.0
 dependencies:
   - name: postgis
-    version: "2.0.1"
-    repository: "https://terrestris.github.io/helm-charts"
+    # version: "2.0.1"
+    # repository: "https://terrestris.github.io/helm-charts"
+    version: "*"
+    repository: "file://../postgis"
     condition: postgis.enabled
   - name: geoserver
     version: "2.1.0"
