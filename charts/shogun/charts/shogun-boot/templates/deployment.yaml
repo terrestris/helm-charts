@@ -108,6 +108,9 @@ spec:
             - name: log4j2-config-volume
               mountPath: /config/log4j2.yml
               subPath: log4j2.yml
+            - name: index-html-volume
+              mountPath: "/app/resources/templates/index.html"
+              subPath: index.html
             {{- with .Values.extraVolumeMounts }}
               {{- toYaml . | nindent 12 }}
             {{- end }}
@@ -131,6 +134,12 @@ spec:
             items:
               - key: init-sh
                 path: "init.sh"
+        - name: index-html-volume
+          configMap:
+            name: {{ include "shogun-boot.fullname" . }}
+            items:
+              - key: index-html
+                path: "index.html"
         {{- with .Values.extraVolumes }}
           {{- toYaml . | nindent 8 }}
         {{- end }}

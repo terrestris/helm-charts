@@ -38,12 +38,6 @@ data:
         'Group'
       ],
       dashboard: {
-        news: {
-          visible: true
-        },
-        statistics: {
-          visible: true
-        },
         applications: {
           visible: true
         },
@@ -52,7 +46,13 @@ data:
         },
         users: {
           visible: true
-        }
+        },
+        news: {
+          visible: true
+        },
+        statistics: {
+          visible: false
+        },
       },
       navigation: {
         general: {
