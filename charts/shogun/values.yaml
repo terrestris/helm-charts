@@ -100,6 +100,8 @@ keycloak:
   extraEnvVars:
     - name: KEYCLOAK_EXTRA_ARGS
       value: '--import-realm'
+    - name: SHOGUN_WEBHOOK_URIS
+      value: 'http://shogun-boot.default.svc.cluster.local:8080/webhooks/keycloak'
   initContainers:
     - name: keycloak-data-container
       image: docker-public.terrestris.de/shogun/keycloak-data:1.0
