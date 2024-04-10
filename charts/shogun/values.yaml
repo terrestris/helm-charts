@@ -107,12 +107,22 @@ keycloak:
       volumeMounts:
         - name: realm-import
           mountPath: "/share"
+    - name: keycloak-event-listener-container
+      image: docker-public.terrestris.de/shogun/keycloak-event-listener:1.0
+      command: ['cp', '/event-listener-shogun-jar-with-dependencies.jar', '/opt/bitnami/keycloak/providers/event-listener-shogun-jar-with-dependencies.jar']
+      volumeMounts:
+        - name: providers
+          mountPath: /opt/bitnami/keycloak/providers
   extraVolumes:
     - name: realm-import
+      emptyDir: {}
+    - name: providers
       emptyDir: {}
   extraVolumeMounts:
     - name: realm-import
       mountPath: /opt/bitnami/keycloak/data/import
+    - name: providers
+      mountPath: /opt/bitnami/keycloak/providers
   externalDatabase:
     host: shogun-postgis.default.svc.cluster.local
     user: keycloak
