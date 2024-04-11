@@ -31,8 +31,7 @@ resources:
   limits:
     memory: 2500Mi
   requests:
-    cpu: 500m
-    memory: 1500Mi
+    memory: 1250Mi
 
 nodeSelector: {}
 
@@ -49,7 +48,48 @@ environment:
 storage:
   dataDir: /opt/geoserver_data
   additionalLibsDir: /opt/additional_libs
-  # initDataUrl: https://files.example.com/geoserver_data.tgz
+
+initData:
+  enabled: false
+  initDataUrl: https://files.example.com/geoserver_data.tgz
+  secret: my-secret
+
+# init container config (can be used to add community modules or initial datasets)
+initContainers:
+  - name: init-data-directory
+    image: docker.terrestris.de/alpine
+    command: [ "/bin/sh", "/mnt/init-data.sh" ]
+    volumeMounts:
+      - name: temp
+        mountPath: /mnt/download
+      - name: init-configmap
+        mountPath: /mnt/
+      - name: datadir
+        mountPath: /opt/geoserver_data
+  - name: init-community-modules
+    image: docker.terrestris.de/alpine
+    command: [ "/bin/sh","/mnt/init-community-modules.sh" ]
+    volumeMounts:
+      - name: temp
+        mountPath: /mnt/download
+      - name: init-configmap
+        mountPath: /mnt/
+      - name: additional_libs_dir
+        mountPath:  /opt/additional_libs
+extraVolumes:
+  - name: temp
+    emptyDir: {}
+  - name: init-configmap
+    configMap:
+      name: geoserver-init-configmap
+      items:
+        - key: init-data.sh
+          path: init-data.sh
+        - key: init-community-modules.sh
+          path: init-community-modules.sh
+extraVolumeMounts:
+  - name: providers
+    mountPath: /opt/bitnami/keycloak/providers
 
 # optional existing pvc for persistent geoserver data
 persistence:

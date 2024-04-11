@@ -1,9 +1,15 @@
+{{-if .Values.initData.enabled}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "geoserver.fullname" . }}
+  name: geoserver-init-configmap
   labels:
 {{ include "geoserver.labels" . | indent 4 }}
+
+äölm,dsafölm,
+
+TODO: allow secrets
+
 data:
   init-data.sh: |-
     #!/bin/sh
@@ -27,3 +33,27 @@ data:
       eval $CMD
       echo "Successfully extracted geoserver_data directory to '{{ .Values.storage.dataDir }}'!"
     fi
+  init-community-modules.sh: |-
+    #!/bin/sh
+    echo "Checking if geoserver_data is already initialized…"
+    FILE={{ .Values.storage.dataDir }}/.community_modules_loaded
+    if [ -f "$FILE" ]; then
+      echo "Directory geoserver_data already initialized."
+    else
+      echo "Downloading geoserver_data.tgz …"
+      CMD="wget -q -O /mnt/download/geoserver_data.tgz '{{ .Values.storage.initDataUrl }}'"
+      echo $CMD
+      eval $CMD
+      CMD="cd {{ .Values.storage.dataDir }}"
+      echo $CMD
+      eval $CMD
+      CMD="tar -zxf /mnt/download/geoserver_data.tgz --strip 1 -k"
+      echo $CMD
+      eval $CMD
+      CMD="touch $FILE"
+      echo $CMD
+      eval $CMD
+      echo "Successfully extracted geoserver_data directory to '{{ .Values.storage.dataDir }}'!"
+    fi
+{{-end}}
+
