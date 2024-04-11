@@ -31,8 +31,7 @@ resources:
   limits:
     memory: 2500Mi
   requests:
-    cpu: 500m
-    memory: 1500Mi
+    memory: 1250Mi
 
 nodeSelector: {}
 
@@ -43,6 +42,10 @@ affinity: {}
 environment:
   installExtensions: false
   stableExtensions:
+  communityExtensions:
+    names: sec-keycloak
+    version: 2.24-SNAPSHOT
+    baseUrl: https://build.geoserver.org/geoserver/2.24.x/community-latest/
   # replace example.com with your host
   javaOptions: -Xms1g -Xmx2g -DGEOSERVER_CSRF_WHITELIST=localhost,example.com
 
@@ -50,7 +53,48 @@ storage:
   dataDir: /opt/geoserver_data
   # https://github.com/terrestris/shogun-docker/tree/main/shogun-geoserver/additional_libs
   additionalLibsDir: /opt/additional_libs
-  # initDataUrl: https://files.example.com/geoserver_data.tgz
+
+initData:
+  enabled: false
+  initDataUrl: https://files.example.com/geoserver_data.tgz
+  credentials:
+    authenticationRequired: false
+    secretName: my-secret
+    usernameKey: user
+    passwordKey: password
+
+# init container config (can be used to add community modules or initial datasets)
+initContainers:
+  - name: init-data-directory
+    image: docker.terrestris.de/alpine
+    command: [ "/bin/sh", "/mnt/init-data.sh" ]
+    volumeMounts:
+      - name: temp
+        mountPath: /mnt/download
+      - name: init-configmap
+        mountPath: /mnt/
+      - name: datadir
+        mountPath: /opt/geoserver_data
+  - name: init-community-modules
+    image: docker.terrestris.de/alpine
+    command: [ "/bin/sh","/mnt/init-community-modules.sh" ]
+    volumeMounts:
+      - name: temp
+        mountPath: /mnt/download
+      - name: init-configmap
+        mountPath: /mnt/
+      - name: additional-libs
+        mountPath: /opt/additional_libs
+extraVolumes:
+  - name: init-configmap
+    configMap:
+      name: geoserver-init-configmap
+      items:
+        - key: init-data.sh
+          path: init-data.sh
+        - key: init-community-modules.sh
+          path: init-community-modules.sh
+extraVolumeMounts:
 
 # optional existing pvc for persistent geoserver data
 persistence:

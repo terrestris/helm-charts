@@ -1,19 +1,29 @@
+{{- if or .Values.initData.enabled .Values.environment.communityExtensions.names -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "geoserver.fullname" . }}
+  name: geoserver-init-configmap
   labels:
 {{ include "geoserver.labels" . | indent 4 }}
 data:
   init-data.sh: |-
     #!/bin/sh
+    if {{ not .Values.initData.enabled }}; then
+      exit 0
+    fi
     echo "Checking if geoserver_data is already initialized…"
     FILE={{ .Values.storage.dataDir }}/.init
     if [ -f "$FILE" ]; then
       echo "Directory geoserver_data already initialized."
     else
       echo "Downloading geoserver_data.tgz …"
-      CMD="wget -q -O /mnt/download/geoserver_data.tgz '{{ .Values.storage.initDataUrl }}'"
+      if ([ -z "$DL_USER" ] || [ -z "$DL_PASSWORD" ] || {{ not .Values.initData.credentials.authenticationRequired}} ); then
+        echo "Downloading without credentials…"
+        CMD="wget -O /mnt/download/geoserver_data.tgz '{{ .Values.initData.initDataUrl }}'"
+      else
+        echo "Downloading with basic auth credentials…"
+        CMD="wget --user $DL_USER --password $DL_PASSWORD -O /mnt/download/geoserver_data.tgz '{{ .Values.initData.initDataUrl }}'"
+      fi
       echo $CMD
       eval $CMD
       CMD="cd {{ .Values.storage.dataDir }}"
@@ -27,3 +37,31 @@ data:
       eval $CMD
       echo "Successfully extracted geoserver_data directory to '{{ .Values.storage.dataDir }}'!"
     fi
+  init-community-modules.sh: |-
+    #!/bin/sh
+    apk update && apk add ca-certificates
+    echo "Checking if community modules are already loaded…"
+    FILE={{ .Values.storage.additionalLibsDir }}/.community_modules_loaded
+    if [ -f "$FILE" ]; then
+      echo "Community modules already initialized."
+    else
+      echo "Downloading community modules …"
+      for EXTENSION in $(echo "{{ .Values.environment.communityExtensions.names }}" | tr ',' ' '); do
+        FILE_NAME="geoserver-{{ .Values.environment.communityExtensions.version }}-${EXTENSION}-plugin.zip"
+        URL="{{ .Values.environment.communityExtensions.baseUrl }}$FILE_NAME"
+        CMD="wget -c --no-check-certificate $URL -O $FILE_NAME"
+        echo $CMD
+        eval $CMD
+        CMD="unzip -q -o -d '{{ .Values.storage.additionalLibsDir}}' $FILE_NAME '*.jar'"
+        echo $CMD
+        eval $CMD
+      done
+      CMD="ls {{ .Values.storage.additionalLibsDir }}"
+      echo $CMD
+      eval $CMD
+      CMD="touch $FILE"
+      echo $CMD
+      eval $CMD
+      echo "Successfully installed community modules to '{{ .Values.storage.additionalLibsDir }}'!"
+    fi
+{{- end}}
