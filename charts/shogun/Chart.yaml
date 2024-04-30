@@ -32,8 +32,8 @@ dependencies:
     repository: "file://../shogun-client"
     condition: shogun-client.enabled
   - name: mapfish-print
-    version: "2.0.0"
-    repository: "https://terrestris.github.io/helm-charts"
+    version: "*"
+    repository: "file://../mapfish-print"
     condition: mapfish-print.enabled
   # Disabled for now
   # - name: gnos
