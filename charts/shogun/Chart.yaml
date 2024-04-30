@@ -35,6 +35,8 @@ dependencies:
     version: "*"
     repository: "file://../mapfish-print"
     condition: mapfish-print.enabled
+  - name: shogun-common
+    version: "*"
   # Disabled for now
   # - name: gnos
   #   version: "0.1.0"

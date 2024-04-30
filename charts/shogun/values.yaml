@@ -40,9 +40,9 @@ shogun-boot:
     #    hosts:
     #      - shogun.local
   postgres:
-    host: shogun-postgis.default.svc.cluster.local
-    credentialsSecret: shogun-postgis-shogun-credentials
-    credentialsSecretKeyPassword: shogun-password
+    host:
+    credentialsSecret:
+    credentialsSecretKeyPassword:
   keycloak:
     host: shogun-keycloak.default.svc.cluster.local
 
@@ -129,7 +129,7 @@ keycloak:
     host: shogun-postgis.default.svc.cluster.local
     user: keycloak
     database: keycloak
-    existingSecret: shogun-postgis-keycloak-credentials
+    existingSecret: test-shogun-postgis-keycloak-credentials
     existingSecretPasswordKey: custom-user-password
 
 mapfish-print:

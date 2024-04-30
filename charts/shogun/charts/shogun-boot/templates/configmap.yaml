@@ -8,8 +8,8 @@ data:
   init-sh: |-
     #!/bin/sh
     export PGPASSWORD=${DB_PASSWORD}
-    echo "SELECT 'CREATE DATABASE {{ .Values.postgres.databasename }}' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '{{ .Values.postgres.databasename }}')\gexec" | psql -h {{ .Values.postgres.host }} -U ${DB_USER}
-    psql -h {{ .Values.postgres.host }} -U ${DB_USER} {{ .Values.postgres.databasename }} -c 'CREATE EXTENSION IF NOT EXISTS postgis;'
+    echo "SELECT 'CREATE DATABASE {{ .Values.postgres.databasename }}' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '{{ .Values.postgres.databasename }}')\gexec" | psql -h {{ include "shogun-common.database.host" . }} -U ${DB_USER}
+    psql -h {{ include "shogun-common.database.host" . }} -U ${DB_USER} {{ .Values.postgres.databasename }} -c 'CREATE EXTENSION IF NOT EXISTS postgis;'
   application-config: |-
     server:
       port: 8080
@@ -88,7 +88,7 @@ data:
         outOfOrder: false
       datasource:
         platform: postgres
-        url: jdbc:postgresql://{{ .Values.postgres.host }}/{{ .Values.postgres.databasename }}?currentSchema={{ .Values.postgres.schema }}
+        url: jdbc:postgresql://{{ include "shogun-common.database.host" . }}/{{ .Values.postgres.databasename }}?currentSchema={{ .Values.postgres.schema }}
         username: ${DB_USER}
         password: ${DB_PASSWORD}
       session:

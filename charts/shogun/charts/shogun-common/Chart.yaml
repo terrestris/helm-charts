@@ -1,0 +1,6 @@
+apiVersion: v2
+name: shogun-common
+description: Common utils for SHOGun helm
+type: library
+version: 0.0.1
+appVersion: 0.0.1

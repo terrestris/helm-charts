@@ -33,7 +33,7 @@ spec:
         - name: check-db-ready
           image: {{ .Values.postgresInitImage }}
           command: ['sh', '-c',
-            'until pg_isready -h {{ .Values.postgres.host }} -p {{ .Values.postgres.port }};
+            'until pg_isready -h {{ include "shogun-common.database.host" . }} -p {{ .Values.postgres.port }};
             do echo waiting for database; sleep 2; done;']
         - name: check-db
           image: {{ .Values.postgresInitImage }}
@@ -47,8 +47,8 @@ spec:
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.postgres.credentialsSecret }}
-                  key: {{ .Values.postgres.credentialsSecretKeyPassword }}
+                  name: {{ include "shogun-common.database.shogun.credentialsSecret" . }}
+                  key: {{ include "shogun-common.database.shogun.credentialsSecretKeyPassword" . }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -61,15 +61,15 @@ spec:
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.postgres.credentialsSecret }}
-                  key: {{ .Values.postgres.credentialsSecretKeyPassword }}
+                  name: {{ include "shogun-common.database.shogun.credentialsSecret" . }}
+                  key: {{ include "shogun-common.database.shogun.credentialsSecretKeyPassword" . }}
             - name: KEYCLOAK_USER
               value: {{ .Values.keycloak.userName }}
             - name: KEYCLOAK_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.keycloak.passwordSecret }}
-                  key: admin-password
+                  name: {{ include "shogun-common.keycloak.credentialsSecret" . }}
+                  key: {{ include "shogun-common.keycloak.credentialsSecretKeyPassword" . }}
             {{- if .Values.mail.enabled }}
             - name: MAIL_USER
               valueFrom:
