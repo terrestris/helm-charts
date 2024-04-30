@@ -1,13 +1,12 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "shogun-boot.fullname" . }}
   labels:
     {{- include "shogun-boot.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
-  {{- end }}
+  serviceName: {{ include "shogun-boot.fullname" . }}
+  replicas: 1
   selector:
     matchLabels:
       {{- include "shogun-boot.selectorLabels" . | nindent 6 }}
@@ -102,6 +101,8 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
+            - name: datadir
+              mountPath: /data
             - name: config-volume
               mountPath: /config/application.yml
               subPath: application.yml
@@ -115,6 +116,18 @@ spec:
               {{- toYaml . | nindent 12 }}
             {{- end }}
       volumes:
+        {{- if and .Values.persistence.enabled (not .Values.persistence.useExisting) }}
+        - name: datadir
+          persistentVolumeClaim:
+            claimName: {{ include "shogun-boot.fullname" . }}
+        {{- else if and .Values.persistence.useExisting (.Values.persistence.existingPvcName) }}
+        - name: datadir
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.existingPvcName }}
+        {{- else }}
+        - name: datadir
+          emptyDir: { }
+        {{- end }}
         - name: config-volume
           configMap:
             name: {{ include "shogun-boot.fullname" . }}
