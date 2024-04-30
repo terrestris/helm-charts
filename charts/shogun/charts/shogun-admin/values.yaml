@@ -46,7 +46,7 @@ ingress:
   enabled: false
   className: ""
   annotations: {}
-    # kubernetes.io/ingress.class: nginx
+    # spec.ingressClassName: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
     - host: shogun.local

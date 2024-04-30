@@ -10,7 +10,7 @@ shogun-admin:
       - host: shogun.local
         paths:
           - path: /admin(/|$)(.*)
-            pathType: Prefix
+            pathType: ImplementationSpecific
     tls: []
     #  - secretName: shogun-tls
     #    hosts:
@@ -28,7 +28,7 @@ shogun-boot:
     enabled: true
     className: ""
     annotations: { }
-    # kubernetes.io/ingress.class: nginx
+    # spec.ingressClassName: nginx
     # kubernetes.io/tls-acme: "true"
     hosts:
       - host: shogun.local
@@ -58,7 +58,7 @@ shogun-client:
       - host: shogun.local
         paths:
           - path: /client(/|$)(.*)
-            pathType: Prefix
+            pathType: ImplementationSpecific
     tls: []
     #  - secretName: shogun-tls
     #    hosts:
@@ -80,7 +80,7 @@ geoserver:
   ingress:
     enabled: true
     annotations:
-      kubernetes.io/ingress.class: nginx
+      spec.ingressClassName: nginx
       # kubernetes.io/tls-acme: "true"
       nginx.ingress.kubernetes.io/enable-cors: "true"
     hosts:
