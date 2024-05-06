@@ -99,6 +99,17 @@ entries:
     urls:
     - https://github.com/terrestris/helm-charts/releases/download/geoserver-cloud-0.1.0/geoserver-cloud-0.1.0.tgz
     version: 0.1.0
+  gnos:
+  - apiVersion: v2
+    appVersion: 4.2.5
+    created: "2024-05-06T12:28:47.432613056Z"
+    description: A GNOS Helm chart for Kubernetes
+    digest: 3c1f47941b7c394f0035245dc43948faa3de7d0d7f3c0a9d81220e59a8f34fef
+    name: gnos
+    type: application
+    urls:
+    - https://github.com/terrestris/helm-charts/releases/download/gnos-0.1.1/gnos-0.1.1.tgz
+    version: 0.1.1
   mapfish-print:
   - apiVersion: v2
     appVersion: 3.30.5
@@ -446,4 +457,4 @@ entries:
     urls:
     - https://github.com/terrestris/helm-charts/releases/download/postgis-0.1.3/postgis-0.1.3.tgz
     version: 0.1.3
-generated: "2024-04-09T14:01:04.306877622Z"
+generated: "2024-05-06T12:28:47.432717481Z"
