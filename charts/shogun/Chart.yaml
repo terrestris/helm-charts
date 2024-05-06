@@ -10,7 +10,7 @@ dependencies:
     repository: "https://terrestris.github.io/helm-charts"
     condition: postgis.enabled
   - name: geoserver
-    version: "2.1.0"
+    version: "3.0.1"
     repository: "https://terrestris.github.io/helm-charts"
     condition: geoserver.enabled
   - name: keycloak
