@@ -17,23 +17,14 @@ spec:
         app.kubernetes.io/name: {{ include "geoserver.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
-    {{- with .Values.imagePullSecrets }}
+      {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
-    {{- end }}
+      {{- end }}
+      {{- with .Values.initContainers }}
       initContainers:
-        {{- if and .Values.storage.initDataUrl }}
-        - name: download-data
-          image: alpine
-          command: ["/bin/sh","/mnt/init-data.sh"]
-          volumeMounts:
-            - name: temp
-              mountPath: /mnt/download
-            - name: init-configmap
-              mountPath: /mnt/
-            - name: datadir
-              mountPath: {{ .Values.storage.dataDir }}
-        {{- end }}
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -75,17 +66,14 @@ spec:
               mountPath: {{ .Values.storage.dataDir }}
             - name: additional-libs
               mountPath: {{ .Values.storage.additionalLibsDir }}
+          {{- if .Values.extraVolumeMounts }}
+          {{- toYaml .Values.extraVolumeMounts | nindent 12 }}
+          {{- end }}
       volumes:
         - name: temp
           emptyDir: {}
         - name: additional-libs
           emptyDir: {}
-        - name: init-configmap
-          configMap:
-            name: {{ include "geoserver.fullname" . }}
-            items:
-              - key: init-data.sh
-                path: init-data.sh
         {{- if and .Values.persistence.enabled (not .Values.persistence.useExisting) }}
         - name: datadir
           persistentVolumeClaim:
@@ -97,4 +85,7 @@ spec:
         {{- else }}
         - name: datadir
           emptyDir: {}
+        {{- end }}
+        {{- if .Values.extraVolumes }}
+        {{- toYaml .Values.extraVolumes | nindent 8 }}
         {{- end }}

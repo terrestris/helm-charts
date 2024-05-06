@@ -1,11 +1,10 @@
-# Default values for gnos.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
 replicaCount: 1
 
+logs:
+  enabled: true
+
 image:
-  repository: geonetwork
+  repository: docker-public.terrestris.de/terrestris/shogun-admin
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
@@ -14,9 +13,15 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+service:
+  type: ClusterIP
+  port: 80
+
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
   # Annotations to add to the service account
   annotations: {}
   # The name of the service account to use.
@@ -24,6 +29,7 @@ serviceAccount:
   name: ""
 
 podAnnotations: {}
+podLabels: {}
 
 podSecurityContext: {}
   # fsGroup: 2000
@@ -36,10 +42,6 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-service:
-  type: ClusterIP
-  port: 8080
-
 ingress:
   enabled: false
   className: ""
@@ -47,14 +49,14 @@ ingress:
     # spec.ingressClassName: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: chart-example.local
+    - host: shogun.local
       paths:
-        - path: /
+        - path: /shogun-admin/
           pathType: ImplementationSpecific
   tls: []
-  #  - secretName: chart-example-tls
+  #  - secretName: shogun-tls
   #    hosts:
-  #      - chart-example.local
+  #      - shogun.local
 
 resources:
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -62,18 +64,32 @@ resources:
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
   # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  requests:
-    cpu: 100m
-    memory: 768Mi
+  # limits:
+  #   cpu: 1
+  #   memory: 2Gi
+  # requests:
+  #   cpu: 250m
+  #   memory: 256Mi
 
 autoscaling:
   enabled: false
   minReplicas: 1
-  maxReplicas: 1
+  maxReplicas: 100
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
+
+# Additional volumes on the output Deployment definition.
+extraVolumes: []
+# - name: foo
+#   secret:
+#     secretName: mysecret
+#     optional: false
+
+# Additional volumeMounts on the output Deployment definition.
+extraVolumeMounts: []
+# - name: foo
+#   mountPath: "/etc/foo"
+#   readOnly: true
 
 nodeSelector: {}
 
@@ -81,45 +97,18 @@ tolerations: []
 
 affinity: {}
 
-javaHeapSizeDefinition: -Xms512M -Xss512M -Xmx2G
+shogun:
+  appPrefix: "/admin"
+  base: "/shogun-boot"
 
-db:
-  name: gnos
-  username: postgres
-  password: postgres
-  host: postgres
-  port: 5432
+keycloak:
+  host: "shogun.local/keycloak"
+  realm: SHOGun
+  clientId: shogun-admin
+  authorizedAdminRole: admin
 
-persistence:
-  enabled: false
-  useExisting: false
-  existingPvcName:
-  storageClassName:
-  accessMode: ReadWriteOnce
-  size: 8Gi
+client:
+  base: "/client"
 
-# Probes
-livenessProbe:
-  enabled: true
-  url: /geonetwork/srv/eng/csw?SERVICE=CSW&VERSION=2.0.2&REQUEST=GetCapabilities
-  initialDelaySeconds: 15
-  timeoutSeconds: 3
-  periodSeconds: 30
-  failureThreshold: 5
-
-readinessProbe:
-  enabled: true
-  url: /geonetwork/srv/eng/csw?SERVICE=CSW&VERSION=2.0.2&REQUEST=GetCapabilities
-  initialDelaySeconds: 0
-  timeoutSeconds: 1
-
-startupProbe:
-  enabled: true
-  url: /geonetwork/srv/eng/csw?SERVICE=CSW&VERSION=2.0.2&REQUEST=GetCapabilities
-  failureThreshold: 15
-  initialDelaySeconds: 2
-  periodSeconds: 10
-
-elk:
-  name: gnos-elk
-  version: 7.1.1
+geoserver:
+  url: https://geoserver.example.com

@@ -1,0 +1,612 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+{{ include "shogun-admin.labels" . | indent 4 }}
+  name: {{ include "shogun-admin.fullname" . }}
+data:
+  admin-client-config: |-
+    var shogunApplicationConfig = {
+      appPrefix: '{{ .Values.shogun.appPrefix }}',
+      path: {
+        modelConfigs: '{{ .Values.shogun.appPrefix }}/modelconfigs',
+        shogunBase: '{{ .Values.shogun.base }}/',
+        logo: null
+      },
+      security: {
+        keycloak: {
+          enabled: true,
+          host: 'https://{{ .Values.keycloak.host }}',
+          realm: '{{ .Values.keycloak.realm }}',
+          clientId: '{{ .Values.keycloak.clientId }}',
+          authorizedRoles: [
+            '{{ .Values.keycloak.authorizedAdminRole }}'
+          ]
+        }
+      },
+      geoserver: {
+        base: '{{ .Values.geoserver.url }}',
+        upload: {
+          workspace: 'SHOGUN',
+          limit: 5000000000
+        }
+      },
+      models: [
+        'Application',
+        'Layer',
+        'User',
+        'Group'
+      ],
+      dashboard: {
+        applications: {
+          visible: true
+        },
+        layers: {
+          visible: true
+        },
+        users: {
+          visible: true
+        },
+        news: {
+          visible: true
+        },
+        statistics: {
+          visible: false
+        },
+      },
+      navigation: {
+        general: {
+          imagefiles: {
+            visible: false
+          }
+        },
+        status: {
+          metrics: {
+            visible: true
+          },
+          logs: {
+            visible: true
+          }
+        },
+        settings: {
+          global: {
+            visible: true
+          },
+          logs: {
+            visible: true
+          }
+        }
+      }
+    };
+  application-config: |-
+    {
+      "i18n": {
+        "de": {
+          "entityName": "Instanz",
+          "navigationTitle": "Instanzen",
+          "labelID": "Identifier",
+          "labelEstabl": "Erstellt am",
+          "labelEdit": "Zuletzt editiert am",
+          "labelName": "Name",
+          "labelWork": "Arbeitsstand",
+          "labelClientConfig": "Client-Konfiguration",
+          "labelTree": "Themenbaum",
+          "labelLayerConfig": "Layer-Konfiguration",
+          "labelToolConfig": "Werkzeug-Konfiguration",
+          "labelUserPermissions": "Nutzerberechtigungen",
+          "titleId": "ID",
+          "titleName": "Name",
+          "titleEdit": "Zuletzt editiert am",
+          "titleLink": "Link zur Instanz",
+          "toolTipLink": "Öffne Instanz"
+        },
+        "en": {
+          "entityName": "Instance",
+          "navigationTitle": "Instance",
+          "labelID": "Identifier",
+          "labelEstabl": "Created at",
+          "labelEdit": "Last edited on",
+          "labelName": "Name",
+          "labelWork": "Status of work",
+          "labelClientConfig": "Client configuration",
+          "labelTree": "Layertree",
+          "labelLayerConfig": "Layer configuration",
+          "labelToolConfig": "Configure Tools",
+          "labelUserPermissions": "User permissions",
+          "titleId": "ID",
+          "titleName": "Name",
+          "titleEdit": "Last edited on",
+          "titleLink": "Link to instance",
+          "toolTipLink": "Open instance"
+        }
+      },
+      "endpoint": "{{ .Values.shogun.base }}/applications",
+      "entityType": "application",
+      "entityName": "#i18n.entityName",
+      "navigationTitle": "#i18n.navigationTitle",
+      "subTitle": "",
+      "formConfig": {
+        "name": "application",
+        "fields": [
+          {
+            "dataType": "number",
+            "dataField": "id",
+            "label": "#i18n.labelID",
+            "readOnly": "true"
+          },
+          {
+            "dataField": "created",
+            "dataType": "date",
+            "readOnly": "true",
+            "component": "DateField",
+            "label": "#i18n.labelEstabl",
+            "fieldProps": {
+              "dateFormat": "DD.MM.YYYY HH:mm"
+            }
+          },
+          {
+            "dataField": "modified",
+            "dataType": "date",
+            "readOnly": "true",
+            "label": "#i18n.labelEdit",
+            "component": "DateField",
+            "fieldProps": {
+              "dateFormat": "DD.MM.YYYY HH:mm"
+            }
+          },
+          {
+            "component": "Input",
+            "dataField": "name",
+            "label": "#i18n.labelName",
+            "required": "true"
+          },
+          {
+            "component": "Switch",
+            "dataField": "stateOnly",
+            "label": "#i18n.labelWork",
+            "readOnly": "true"
+          },
+          {
+            "component": "JSONEditor",
+            "dataField": "clientConfig",
+            "label": "#i18n.labelClientConfig",
+            "fieldProps": {}
+          },
+          {
+            "component": "JSONEditor",
+            "dataField": "layerTree",
+            "label": "#i18n.labelTree",
+            "fieldProps": {}
+          },
+          {
+            "component": "JSONEditor",
+            "dataField": "layerConfig",
+            "label": "#i18n.labelLayerConfig",
+            "fieldProps": {}
+          },
+          {
+            "component": "JSONEditor",
+            "dataField": "toolConfig",
+            "label": "#i18n.labelToolConfig",
+            "fieldProps": {}
+          },
+          {
+            "component": "UserPermissionGrid",
+            "label": "#i18n.labelUserPermissions",
+            "fieldProps": {}
+          }
+        ]
+      },
+      "tableConfig": {
+        "columnDefinition": [
+          {
+            "title": "#i18n.titleId",
+            "dataIndex": "id",
+            "sortConfig": {
+              "isSortable": true,
+              "defaultSortOrder": "descend"
+            }
+          },
+          {
+            "title": "#i18n.titleName",
+            "dataIndex": "name",
+            "key": "name",
+            "sortConfig": {
+              "isSortable": false
+            },
+            "filterConfig": {
+              "isFilterable": true
+            }
+          },
+          {
+            "title": "#i18n.titleEdit",
+            "dataIndex": "modified",
+            "key": "modified",
+            "sortConfig": {
+              "isSortable": true
+            },
+            "cellRenderComponentName": "DateCell"
+          },
+          {
+            "title": "#i18n.titleLink",
+            "dataIndex": "id",
+            "key": "link",
+            "cellRenderComponentName": "LinkCell",
+            "cellRenderComponentProps": {
+              "title": "#i18n.toolTipLink",
+              "template": "{{ .Values.client.base }}/?applicationId={}"
+            }
+          }
+        ]
+      }
+    }
+  layer-config: |-
+    {
+      "i18n": {
+        "de": {
+          "entityName": "Thema",
+          "navigationTitle": "Themen",
+          "labelId": "ID",
+          "labelEstabl": "Erstellt am",
+          "labelEdit": "Zuletzt editiert am",
+          "labelName": "Name",
+          "labelType": "Typ",
+          "labelConfig": "Konfiguration",
+          "labelSource": "Datenquelle",
+          "titleId": "ID",
+          "titleName": "Name",
+          "titleType": "Typ",
+          "titlePrev": "Layervorschau"
+        },
+        "en": {
+          "entityName": "Subject",
+          "navigationTitle": "Subjects",
+          "labelId": "ID",
+          "labelEstabl": "Created at",
+          "labelEdit": "Last edited on",
+          "labelName": "Name",
+          "labelType": "Type",
+          "labelConfig": "Configuration",
+          "labelSource": "Datasource",
+          "titleId": "ID",
+          "titleName": "Name",
+          "titleType": "Type",
+          "titlePrev": "Layer preview"
+        }
+      },
+      "endpoint": "{{ .Values.shogun.base }}/layers",
+      "entityType": "layer",
+      "entityName": "#i18n.entityName",
+      "navigationTitle": "#i18n.navigationTitle",
+      "subTitle": "",
+      "formConfig": {
+        "name": "layer",
+        "fields": [
+          {
+            "dataType": "number",
+            "dataField": "id",
+            "label": "#i18n.labelId",
+            "readOnly": "true"
+          },
+          {
+            "dataField": "created",
+            "dataType": "date",
+            "readOnly": "true",
+            "component": "DateField",
+            "label": "#i18n.labelEstabl",
+            "fieldProps": {
+              "dateFormat": "DD.MM.YYYY HH:mm"
+            }
+          },
+          {
+            "dataField": "modified",
+            "dataType": "date",
+            "readOnly": "true",
+            "label": "#i18n.labelEdit",
+            "component": "DateField",
+            "fieldProps": {
+              "dateFormat": "DD.MM.YYYY HH:mm"
+            }
+          },
+          {
+            "component": "Input",
+            "dataField": "name",
+            "label": "#i18n.labelName",
+            "required": "true"
+          },
+          {
+            "component": "LayerTypeSelect",
+            "dataField": "type",
+            "label": "#i18n.labelType",
+            "required": "true"
+          },
+          {
+            "component": "JSONEditor",
+            "dataField": "clientConfig",
+            "label": "#i18n.labelConfig",
+            "fieldProps": {}
+          },
+          {
+            "component": "JSONEditor",
+            "dataField": "sourceConfig",
+            "label": "#i18n.labelSource",
+            "fieldProps": {}
+          }
+        ]
+      },
+      "tableConfig": {
+        "columnDefinition": [
+          {
+            "title": "#i18n.titleId",
+            "dataIndex": "id",
+            "sortConfig": {
+              "isSortable": false
+            }
+          },
+          {
+            "title": "#i18n.titleName",
+            "dataIndex": "name",
+            "key": "name",
+            "sortConfig": {
+              "isSortable": true
+            },
+            "filterConfig": {
+              "isFilterable": true
+            }
+          },
+          {
+            "title": "#i18n.titleType",
+            "dataIndex": "type",
+            "key": "type",
+            "sortConfig": {
+              "isSortable": true
+            }
+          },
+          {
+            "title": "#i18n.titlePrev",
+            "key": "preview",
+            "cellRenderComponentName": "LayerPreviewCell"
+          }
+        ]
+      }
+    }
+  user-config: |-
+    {
+      "i18n": {
+        "de": {
+          "entityName": "Benutzer",
+          "navigationTitle": "Benutzer",
+          "labelId": "ID",
+          "labelEstabl": "Erstellt am",
+          "labelEdit": "Zuletzt editiert am",
+          "labelKey": "Keycloak ID",
+          "labelKeyProvDetail": "Keycloak Details",
+          "labelKeyDetail": "Details",
+          "labelSource": "Datenquelle",
+          "titleId": "ID",
+          "titleKeyId": "Keycloak ID",
+          "userDoesNotExistTitle": "Der Nutzer existiert nicht in Keycloak",
+          "titleLink": "Link zum Benutzer",
+          "titleOpen": "Öffne User in Keycloak"
+        },
+        "en": {
+          "entityName": "User",
+          "navigationTitle": "User",
+          "labelId": "ID",
+          "labelEstabl": "Created at",
+          "labelEdit": "Last edited on",
+          "labelKey": "Keycloak ID",
+          "labelKeyProvDetail": "Keycloak details",
+          "labelKeyDetail": "Details",
+          "labelSource": "Datasource",
+          "titleId": "ID",
+          "titleKeyId": "Keycloak ID",
+          "userDoesNotExistTitle": "User does not exist in Keycloak",
+          "titleLink": "Link to user",
+          "titleOpen": "Open user in Keycloak"
+        }
+      },
+      "endpoint": "/users",
+      "entityType": "user",
+      "entityName": "#i18n.entityName",
+      "navigationTitle": "#i18n.navigationTitle",
+      "subTitle": "",
+      "formConfig": {
+        "name": "user",
+        "fields": [
+          {
+            "dataType": "number",
+            "dataField": "id",
+            "label": "#i18n.labelId",
+            "readOnly": "true"
+          },
+          {
+            "dataField": "created",
+            "dataType": "date",
+            "readOnly": "true",
+            "component": "DateField",
+            "label": "#i18n.labelEstabl",
+            "fieldProps": {
+              "dateFormat": "DD.MM.YYYY HH:mm"
+            }
+          },
+          {
+            "dataField": "modified",
+            "dataType": "date",
+            "readOnly": "true",
+            "label": "#i18n.labelEdit",
+            "component": "DateField",
+            "fieldProps": {
+              "dateFormat": "DD.MM.YYYY HH:mm"
+            }
+          },
+          {
+            "component": "DisplayField",
+            "dataField": "authProviderId",
+            "label": "#i18n.labelKey"
+          },
+          {
+            "component": "JSONEditor",
+            "dataField": "providerDetails",
+            "label": "#i18n.labelKeyProvDetail",
+            "fieldProps": {}
+          },
+          {
+            "component": "JSONEditor",
+            "dataField": "details",
+            "label": "#i18n.labelKeyDetail",
+            "fieldProps": {}
+          },
+          {
+            "component": "JSONEditor",
+            "dataField": "clientConfig",
+            "label": "#i18n.labelSource",
+            "fieldProps": {}
+          }
+        ]
+      },
+      "tableConfig": {
+        "columnDefinition": [
+          {
+            "title": "#i18n.titleId",
+            "dataIndex": "id",
+            "sortConfig": {
+              "isSortable": false
+            }
+          },
+          {
+            "title": "#i18n.titleKeyId",
+            "dataIndex": "authProviderId",
+            "key": "authProviderId",
+            "cellRenderComponentName": "VerifyProviderDetailsCell",
+            "cellRenderComponentProps": {
+              "title": "#i18n.userDoesNotExistTitle"
+            },
+            "sortConfig": {
+              "isSortable": true
+            },
+            "filterConfig": {
+              "isFilterable": true
+            }
+          },
+          {
+            "title": "#i18n.titleLink",
+            "dataIndex": "authProviderId",
+            "key": "link",
+            "cellRenderComponentName": "LinkCell",
+            "cellRenderComponentProps": {
+              "title": "#i18n.titleOpen",
+              "template": "/auth/admin/master/console/#/SHOGun/users/{}/settings"
+            }
+          }
+        ]
+      }
+    }
+  group-config: |-
+    {
+      "i18n": {
+        "de": {
+          "entityName": "Gruppe",
+          "navigationTitle": "Gruppen",
+          "labelId": "ID",
+          "labelEstabl": "Erstellt am",
+          "labelEdit": "Zuletzt editiert am",
+          "labelKey": "Keycloak ID",
+          "titleId": "ID",
+          "titleKeyId": "Keycloak ID",
+          "userDoesNotExistTitle": "Die Gruppe existiert nicht in Keycloak",
+          "titleLink": "Link zur Gruppe",
+          "titleGroup": "Öffne Gruppe in Keycloak"
+        },
+        "en": {
+          "entityName": "Group",
+          "navigationTitle": "Groups",
+          "labelId": "ID",
+          "labelEstabl": "Created at",
+          "labelEdit": "Last edited on",
+          "labelKey": "Keycloak ID",
+          "titleId": "ID",
+          "titleKeyId": "Keycloak ID",
+          "userDoesNotExistTitle": "Group does not exist in Keycloak",
+          "titleLink": "Link to group",
+          "titleGroup": "Open group in Keycloak"
+        }
+      },
+      "endpoint": "/groups",
+      "entityType": "group",
+      "entityName": "#i18n.entityName",
+      "navigationTitle": "#i18n.navigationTitle",
+      "subTitle": "",
+      "formConfig": {
+        "name": "group",
+        "fields": [
+          {
+            "dataType": "number",
+            "dataField": "id",
+            "label": "#i18n.labelId",
+            "readOnly": "true"
+          },
+          {
+            "dataField": "created",
+            "dataType": "date",
+            "readOnly": "true",
+            "component": "DateField",
+            "label": "#i18n.labelEstabl",
+            "fieldProps": {
+              "dateFormat": "DD.MM.YYYY HH:mm"
+            }
+          },
+          {
+            "dataField": "modified",
+            "dataType": "date",
+            "readOnly": "true",
+            "label": "#i18n.labelEdit",
+            "component": "DateField",
+            "fieldProps": {
+              "dateFormat": "DD.MM.YYYY HH:mm"
+            }
+          },
+          {
+            "component": "DisplayField",
+            "dataField": "authProviderId",
+            "label": "#i18n.labelKey"
+          }
+        ]
+      },
+      "tableConfig": {
+        "columnDefinition": [
+          {
+            "title": "#i18n.titleId",
+            "dataIndex": "id",
+            "sortConfig": {
+              "isSortable": false
+            }
+          },
+          {
+            "title": "#i18n.titleKeyId",
+            "dataIndex": "authProviderId",
+            "key": "authProviderId",
+            "cellRenderComponentName": "VerifyProviderDetailsCell",
+            "cellRenderComponentProps": {
+              "title": "#i18n.groupDoesNotExistTitle"
+            },
+            "sortConfig": {
+              "isSortable": true
+            },
+            "filterConfig": {
+              "isFilterable": true
+            }
+          },
+          {
+            "title": "#i18n.titleLink",
+            "dataIndex": "authProviderId",
+            "key": "link",
+            "cellRenderComponentName": "LinkCell",
+            "cellRenderComponentProps": {
+              "title": "#i18n.titleGroup",
+              "template": "/auth/admin/master/console/#/SHOGun/groups/{}/settings"
+            }
+          }
+        ]
+      }
+    }

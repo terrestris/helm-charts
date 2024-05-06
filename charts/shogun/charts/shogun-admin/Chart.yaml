@@ -1,0 +1,5 @@
+apiVersion: v2
+appVersion: 14.2.0
+description: Helm chart for SHOGun-Admin-Client
+name: shogun-admin
+version: 1.0.0

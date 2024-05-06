@@ -1,0 +1,170 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "shogun-boot.fullname" . }}
+  labels:
+    {{- include "shogun-boot.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ include "shogun-boot.fullname" . }}
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "shogun-boot.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- if .Values.logs.enabled }}
+        fluentd: "true"
+        {{- end }}
+        {{- include "shogun-boot.labels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "shogun-boot.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: check-db-ready
+          image: {{ .Values.postgresInitImage }}
+          command: ['sh', '-c',
+            'until pg_isready -h {{ include "shogun-common.database.host" . }} -p {{ .Values.postgres.port }};
+            do echo waiting for database; sleep 2; done;']
+        - name: check-db
+          image: {{ .Values.postgresInitImage }}
+          command: ['sh', '-c', '/script/init.sh']
+          volumeMounts:
+            - name: init
+              mountPath: "/script"
+          env:
+            - name: DB_USER
+              value: {{ .Values.postgres.username }}
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "shogun-common.database.shogun.credentialsSecret" . }}
+                  key: {{ include "shogun-common.database.shogun.credentialsSecretKeyPassword" . }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: DB_USER
+              value: {{ .Values.postgres.username }}
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "shogun-common.database.shogun.credentialsSecret" . }}
+                  key: {{ include "shogun-common.database.shogun.credentialsSecretKeyPassword" . }}
+            - name: KEYCLOAK_USER
+              value: {{ .Values.keycloak.userName }}
+            - name: KEYCLOAK_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "shogun-common.keycloak.credentialsSecret" . }}
+                  key: {{ include "shogun-common.keycloak.credentialsSecretKeyPassword" . }}
+            {{- if .Values.mail.enabled }}
+            - name: MAIL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mail-credentials
+                  key: username
+            - name: MAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mail-credentials
+                  key: password
+            {{- end }}
+            - name: JAVA_TOOL_OPTIONS
+              value: {{ .Values.shogun.additionalJavaArgs }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /info/app
+              port: http
+            initialDelaySeconds: 60
+          readinessProbe:
+            httpGet:
+              path: /info/app
+              port: http
+            initialDelaySeconds: 60
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: datadir
+              mountPath: /data
+            - name: config-volume
+              mountPath: /config/application.yml
+              subPath: application.yml
+            - name: log4j2-config-volume
+              mountPath: /config/log4j2.yml
+              subPath: log4j2.yml
+            - name: index-html-volume
+              mountPath: "/app/resources/templates/index.html"
+              subPath: index.html
+            {{- with .Values.extraVolumeMounts }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+      volumes:
+        {{- if and .Values.persistence.enabled (not .Values.persistence.useExisting) }}
+        - name: datadir
+          persistentVolumeClaim:
+            claimName: {{ include "shogun-boot.fullname" . }}
+        {{- else if and .Values.persistence.useExisting (.Values.persistence.existingPvcName) }}
+        - name: datadir
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.existingPvcName }}
+        {{- else }}
+        - name: datadir
+          emptyDir: { }
+        {{- end }}
+        - name: config-volume
+          configMap:
+            name: {{ include "shogun-boot.fullname" . }}
+            items:
+              - key: application-config
+                path: application.yml
+        - name: log4j2-config-volume
+          configMap:
+            name: {{ include "shogun-boot.fullname" . }}
+            items:
+              - key: log4j2-config
+                path: log4j2.yml
+        - name: init
+          configMap:
+            name: {{ include "shogun-boot.fullname" . }}
+            defaultMode: 0777
+            items:
+              - key: init-sh
+                path: "init.sh"
+        - name: index-html-volume
+          configMap:
+            name: {{ include "shogun-boot.fullname" . }}
+            items:
+              - key: index-html
+                path: "index.html"
+        {{- with .Values.extraVolumes }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

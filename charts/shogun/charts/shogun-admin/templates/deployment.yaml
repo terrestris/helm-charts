@@ -1,0 +1,117 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "shogun-admin.fullname" . }}
+  labels:
+    {{- include "shogun-admin.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "shogun-admin.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- if .Values.logs.enabled }}
+        fluentd: "true"
+        {{- end }}
+        {{- include "shogun-admin.labels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "shogun-admin.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: config-volume
+              mountPath: "/var/www/html/config/admin-client-config.js"
+              subPath: admin-client-config.js
+            - name: application-config-volume
+              mountPath: "/var/www/html/modelconfigs/application.json"
+              subPath: application.json
+            - name: layer-config-volume
+              mountPath: "/var/www/html/modelconfigs/layer.json"
+              subPath: layer.json
+            - name: user-config-volume
+              mountPath: "/var/www/html/modelconfigs/user.json"
+              subPath: user.json
+            - name: group-config-volume
+              mountPath: "/var/www/html/modelconfigs/group.json"
+              subPath: group.json
+            {{- with .Values.extraVolumeMounts }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ include "shogun-admin.fullname" . }}
+            items:
+              - key: admin-client-config
+                path: "admin-client-config.js"
+        - name: application-config-volume
+          configMap:
+            name: {{ include "shogun-admin.fullname" . }}
+            items:
+              - key: application-config
+                path: "application.json"
+        - name: layer-config-volume
+          configMap:
+            name: {{ include "shogun-admin.fullname" . }}
+            items:
+              - key: layer-config
+                path: "layer.json"
+        - name: user-config-volume
+          configMap:
+            name: {{ include "shogun-admin.fullname" . }}
+            items:
+              - key: user-config
+                path: "user.json"
+        - name: group-config-volume
+          configMap:
+            name: {{ include "shogun-admin.fullname" . }}
+            items:
+              - key: group-config
+                path: "group.json"
+        {{- with .Values.extraVolumes }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
