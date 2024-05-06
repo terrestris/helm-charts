@@ -26,7 +26,6 @@ Please note: changes in `README.md` are ignored.
 * Check `kubectl logs -f <podname>` for container logs
 * !Pods do normally not restart if the image has not changed!
   * Use `kubectl delete pod <podname>` to explicitly restart a container
-  * TODO: Check if pullStrategy: Always helps. We probably need this anyways if we want to change appVersions in the values files
 
 ## Setting up shogun cluster with kind-dev-cluster
 ```bash
@@ -41,5 +40,4 @@ kubectl port-forward service/shogun-keycloak 1234:http
 kubectl port-forward service/shogun-shogun-boot 1235:http
 kubectl port-forward service/shogun-shogun-client 1236:http
 kubectl port-forward service/shogun-shogun-admin 1237:http
-# TODO: use ingress and map services to different folders instead of using port-forwardings
 ```
