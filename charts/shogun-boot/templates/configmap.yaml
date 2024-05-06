@@ -287,7 +287,7 @@ data:
         </a>
         <ul class="nav col-md-3">
           <li class="nav-item">
-            <a href="#" class="nav-link px-2 text-muted">Version: 18.0.0</a>
+            <a href="#" class="nav-link px-2 text-muted">Version: {{ .Chart.AppVersion }}</a>
           </li>
         </ul>
         <button id="login-btn" class="btn btn-primary">Log in</button>
