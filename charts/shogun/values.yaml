@@ -126,10 +126,10 @@ keycloak:
     - name: providers
       mountPath: /opt/bitnami/keycloak/providers
   externalDatabase:
-    host: shogun-postgis.default.svc.cluster.local
+    host: "{{ .Release.Name }}-postgis"
     user: keycloak
     database: keycloak
-    existingSecret: test-shogun-postgis-keycloak-credentials
+    existingSecret: "{{ .Release.Name }}-postgis-keycloak-credentials"
     existingSecretPasswordKey: custom-user-password
 
 mapfish-print:
