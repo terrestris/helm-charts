@@ -17,4 +17,4 @@ The following table gives an overview about the application specific parameters 
 
 ## Secrets overview
 
-There are no secrets available.
+No secrets required.

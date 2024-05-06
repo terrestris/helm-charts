@@ -12,7 +12,7 @@ These options allow to set up an initial database:
 
 1. `postgres.customInit`: Will use `init.sql` as a custom init script. This creates the specified role and database.
 2. `dataImport`: Extracts the archive available at `dataImport.initDataUrl` and copies all contained SQL files to `/docker-entrypoint-initdb.d`
-    * Credentials can be provided by setting `DL_USER` and `DL_PASSWORD` via `extraInitEnv` or `extraInitEnvFrom`
+    * Basic-Auth-Credentials can be provided by setting `DL_USER` and `DL_PASSWORD` via `extraInitEnv` or `extraInitEnvFrom`
     * Required roles and databases must be created in these sql files.
 
 Both options cannot be enabled together!
