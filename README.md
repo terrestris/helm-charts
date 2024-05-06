@@ -37,7 +37,7 @@ cd charts/shogun
 helm dependency build
 helm install shogun ./ --values ./values.yaml
 
-kubectl port-forward service/shogun-keycloak 1234:https
+kubectl port-forward service/shogun-keycloak 1234:http
 kubectl port-forward service/shogun-shogun-boot 1235:http
 kubectl port-forward service/shogun-shogun-client 1236:http
 kubectl port-forward service/shogun-shogun-admin 1237:http
