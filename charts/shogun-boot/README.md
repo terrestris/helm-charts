@@ -38,7 +38,7 @@ The following table gives an overview about the application specific parameters 
 | `debug.graphiql` | Enable graphiql.                                                                                                                                                                                                                                                     | `false`                                                                                                                                                     |
 
 
-## Secrets overview
+## Env variable overview
 
 This table lists all required secrets for the chart. Please note that currently they are expected to be stored in the given secret name/key combination.
 
@@ -50,3 +50,7 @@ This table lists all required secrets for the chart. Please note that currently 
 | `KEYCLOAK_PASSWORD` | The password of the Keycloak user.                                                                                                                                                                                                                                                                      | `keycloak-credentials` | `password` |
 | `MAIL_USER` | The name of the mail user (only needed if `mail.enabled`).                                                                                                                                                                                                                                              | `mail-credentials` | `username` |
 | `MAIL_PASSWORD` | The password of the mail user (only needed if `mail.enabled`).                                                                                                                                                                                                                                          | `mail-credentials` | `password` |
+
+## Secrets
+
+Usually, the `env` variables listed in the section above are set via `secrets`. Please check `shogun-common` helm chart.

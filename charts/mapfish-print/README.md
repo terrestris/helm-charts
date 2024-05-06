@@ -4,7 +4,7 @@ Helm chart that uses the [`mapfish/mapfish-print`](https://github.com/mapfish/ma
 
 The following parameters can be configured in (custom) `values.yaml`:
 
-* `storage.printConfigDir`: Where to mount the print apps dir.
+* `storage.printConfigDir`: Where to mount the print app dir.
 * `storage.printAppsUrl`: (Optional) External link to a compressed print apps archive (.tar.gz). The data will be extracted during startup.
     * Credentials can be provided by setting `PRINTCONFIG_USER` and `PRINTCONFIG_PASSWORD` via `extraInitEnv` or `extraInitEnvFrom`
 * `extraEnv`: Map of additional environment variables passed to mapfish print.
