@@ -486,6 +486,49 @@ entries:
     urls:
     - https://github.com/terrestris/helm-charts/releases/download/postgis-0.1.3/postgis-0.1.3.tgz
     version: 0.1.3
+  shogun:
+  - apiVersion: v2
+    created: "2024-05-06T13:29:35.186257403Z"
+    dependencies:
+    - condition: postgis.enabled
+      name: postgis
+      repository: https://terrestris.github.io/helm-charts
+      version: 3.0.0
+    - condition: geoserver.enabled
+      name: geoserver
+      repository: https://terrestris.github.io/helm-charts
+      version: 3.0.1
+    - condition: keycloak.enabled
+      name: keycloak
+      repository: https://charts.bitnami.com/bitnami
+      version: 18.7.1
+    - condition: shogun-boot.enabled
+      name: shogun-boot
+      repository: https://terrestris.github.io/helm-charts
+      version: 1.0.0
+    - condition: shogun-admin.enabled
+      name: shogun-admin
+      repository: https://terrestris.github.io/helm-charts
+      version: 1.0.0
+    - condition: shogun-client.enabled
+      name: shogun-client
+      repository: https://terrestris.github.io/helm-charts
+      version: 1.0.0
+    - condition: mapfish-print.enabled
+      name: mapfish-print
+      repository: https://terrestris.github.io/helm-charts
+      version: 2.0.1
+    - name: shogun-common
+      repository: https://terrestris.github.io/helm-charts
+      version: 1.0.0
+    description: A Helm chart for a complete installation of SHOGun
+    digest: f600a6c1a8654c5137f8354ff1b7a702eef41b9c49dab5546f3cc5df9c1019d5
+    icon: https://raw.githubusercontent.com/terrestris/shogun/main/shogun-boot/src/main/resources/public/assets/img/shogun_logo.png
+    name: shogun
+    type: application
+    urls:
+    - https://github.com/terrestris/helm-charts/releases/download/shogun-1.0.0/shogun-1.0.0.tgz
+    version: 1.0.0
   shogun-admin:
   - apiVersion: v2
     appVersion: 14.2.0
@@ -528,4 +571,4 @@ entries:
     urls:
     - https://github.com/terrestris/helm-charts/releases/download/shogun-common-1.0.0/shogun-common-1.0.0.tgz
     version: 1.0.0
-generated: "2024-05-06T13:02:09.025582768Z"
+generated: "2024-05-06T13:29:35.186349015Z"
