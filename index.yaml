@@ -507,6 +507,48 @@ entries:
     version: 0.1.3
   shogun:
   - apiVersion: v2
+    created: "2024-05-07T11:45:57.829264945Z"
+    dependencies:
+    - condition: postgis.enabled
+      name: postgis
+      repository: https://terrestris.github.io/helm-charts
+      version: 3.0.0
+    - condition: geoserver.enabled
+      name: geoserver
+      repository: https://terrestris.github.io/helm-charts
+      version: 3.0.2
+    - condition: keycloak.enabled
+      name: keycloak
+      repository: https://charts.bitnami.com/bitnami
+      version: 18.7.1
+    - condition: shogun-boot.enabled
+      name: shogun-boot
+      repository: https://terrestris.github.io/helm-charts
+      version: 1.0.1
+    - condition: shogun-admin.enabled
+      name: shogun-admin
+      repository: https://terrestris.github.io/helm-charts
+      version: 1.0.0
+    - condition: shogun-client.enabled
+      name: shogun-client
+      repository: https://terrestris.github.io/helm-charts
+      version: 1.0.0
+    - condition: mapfish-print.enabled
+      name: mapfish-print
+      repository: https://terrestris.github.io/helm-charts
+      version: 2.0.3
+    - name: shogun-common
+      repository: https://terrestris.github.io/helm-charts
+      version: 1.0.0
+    description: A Helm chart for a complete installation of SHOGun
+    digest: 7cb99b8aac2f8c3f379897ca9b089ac92b2e739461422a5c2223ba714d6ef600
+    icon: https://raw.githubusercontent.com/terrestris/shogun/main/shogun-boot/src/main/resources/public/assets/img/shogun_logo.png
+    name: shogun
+    type: application
+    urls:
+    - https://github.com/terrestris/helm-charts/releases/download/shogun-1.0.4/shogun-1.0.4.tgz
+    version: 1.0.4
+  - apiVersion: v2
     created: "2024-05-07T11:42:42.270860974Z"
     dependencies:
     - condition: postgis.enabled
@@ -725,4 +767,4 @@ entries:
     urls:
     - https://github.com/terrestris/helm-charts/releases/download/shogun-common-1.0.0/shogun-common-1.0.0.tgz
     version: 1.0.0
-generated: "2024-05-07T11:42:42.270996058Z"
+generated: "2024-05-07T11:45:57.829362237Z"
