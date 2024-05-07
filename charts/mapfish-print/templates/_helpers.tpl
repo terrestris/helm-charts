@@ -44,7 +44,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
 {{/*
-Selector labels
+Selector labels.
 */}}
 {{- define "mapfish-print.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "mapfish-print.name" . }}
