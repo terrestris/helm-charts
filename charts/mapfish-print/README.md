@@ -1,4 +1,4 @@
-# Helm chart for mapfish-print
+# Helm chart for mapfish-print-servlet
 
 Helm chart that uses the [`mapfish/mapfish-print`](https://github.com/mapfish/mapfish-print) docker image for Kubernetes cluster deployments. The mapfish-print version can be defined in the `Chart.yaml` file by setting `appVersion`.
 
