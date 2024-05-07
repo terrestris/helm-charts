@@ -30,7 +30,7 @@ dependencies:
     repository: "https://terrestris.github.io/helm-charts"
     condition: shogun-client.enabled
   - name: mapfish-print
-    version: "2.0.2"
+    version: "2.0.1"
     repository: "https://terrestris.github.io/helm-charts"
     condition: mapfish-print.enabled
   - name: shogun-common
