@@ -32,7 +32,7 @@ Create chart name and version as used by the chart label.
 {{- end -}}
 
 {{/*
-Common labels
+Common labels.
 */}}
 {{- define "mapfish-print.labels" -}}
 helm.sh/chart: {{ include "mapfish-print.chart" . }}
