@@ -29,7 +29,7 @@ data:
       CMD="cd {{ .Values.storage.dataDir }}"
       echo $CMD
       eval $CMD
-      CMD="tar -zxf /mnt/download/geoserver_data.tgz --strip 1 -k"
+      CMD="tar xvf /mnt/download/geoserver_data.tgz"
       echo $CMD
       eval $CMD
       CMD="touch $FILE"
