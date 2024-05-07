@@ -25,7 +25,7 @@ data:
       CMD="cd {{ .Values.storage.printConfigDir }}"
       echo $CMD
       eval $CMD
-      CMD="tar -zxf /mnt/download/printapps.tar.gz --strip 1 -k"
+      CMD="tar xvf /mnt/download/printapps.tar.gz"
       echo $CMD
       eval $CMD
       CMD="touch $FILE"
