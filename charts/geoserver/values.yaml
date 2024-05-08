@@ -106,8 +106,24 @@ persistence:
   size: 8Gi
 
 probes:
-  livenessUrl: /geoserver/web/wicket/resource/org.geoserver.web.GeoServerBasePage/img/logo.png
-  readinessUrl: /geoserver/web/wicket/resource/org.geoserver.web.GeoServerBasePage/img/logo.png
+  liveness:
+    enabled: true
+    failureThreshold: 5
+    initialDelaySeconds: 60
+    periodSeconds: 30
+    timeoutSeconds: 3
+    url: /geoserver/web/wicket/resource/org.geoserver.web.GeoServerBasePage/img/logo.png
+  readiness:
+    enabled: true
+    initialDelaySeconds: 0
+    timeoutSeconds: 1
+    url: /geoserver/web/wicket/resource/org.geoserver.web.GeoServerBasePage/img/logo.png
+  startup:
+    enabled: true
+    failureThreshold: 60
+    initialDelaySeconds: 2
+    periodSeconds: 10
+    url: /geoserver/web/wicket/resource/org.geoserver.web.GeoServerBasePage/img/logo.png
 
 # extraEnv: |
 #   - name: QUERY_LAYER_MAX_FEATURES

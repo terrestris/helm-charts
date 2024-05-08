@@ -49,16 +49,33 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
+          {{- if .Values.probes.readiness.enabled }}
           readinessProbe:
             httpGet:
-              path: {{ .Values.probes.readinessUrl }}
+              path: {{ .Values.probes.readiness.url }}
               port: http
+            timeoutSeconds: {{ .Values.probes.readiness.timeoutSeconds }}
+            initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds }}
+          {{- end }}
+          {{- if .Values.probes.startup.enabled }}
+          startupProbe:
+            httpGet:
+              path: {{ .Values.probes.startup.url }}
+              port: http
+            initialDelaySeconds: {{ .Values.probes.startup.initialDelaySeconds }}
+            failureThreshold: {{ .Values.probes.startup.failureThreshold }}
+            periodSeconds: {{ .Values.probes.startup.periodSeconds }}
+          {{- end }}
+          {{- if .Values.probes.liveness.enabled }}
           livenessProbe:
             httpGet:
-              path: {{ .Values.probes.livenessUrl }}
+              path: {{ .Values.probes.liveness.url }}
               port: http
-            failureThreshold: 1
-            periodSeconds: 60
+            failureThreshold: {{ .Values.probes.liveness.failureThreshold }}
+            initialDelaySeconds: {{ .Values.probes.liveness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probes.liveness.periodSeconds }}
+            timeoutSeconds: {{ .Values.probes.liveness.timeoutSeconds }}
+          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
