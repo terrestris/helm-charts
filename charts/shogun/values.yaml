@@ -120,11 +120,15 @@ keycloak:
       emptyDir: {}
     - name: providers
       emptyDir: {}
+    - name: themes
+      emptyDir: {}
   extraVolumeMounts:
     - name: realm-import
       mountPath: /opt/bitnami/keycloak/data/import
     - name: providers
       mountPath: /opt/bitnami/keycloak/providers
+    - name: themes
+      mountPath: /opt/bitnami/keycloak/themes
   externalDatabase:
     host: "{{ .Release.Name }}-postgis"
     user: keycloak
