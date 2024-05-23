@@ -259,8 +259,8 @@ data:
           "titlePrev": "Layervorschau"
         },
         "en": {
-          "entityName": "Subject",
-          "navigationTitle": "Subjects",
+          "entityName": "Layer",
+          "navigationTitle": "Layers",
           "labelId": "ID",
           "labelEstabl": "Created at",
           "labelEdit": "Last edited on",
