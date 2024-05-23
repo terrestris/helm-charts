@@ -517,6 +517,48 @@ entries:
     version: 0.1.3
   shogun:
   - apiVersion: v2
+    created: "2024-05-23T13:22:57.127313423Z"
+    dependencies:
+    - condition: postgis.enabled
+      name: postgis
+      repository: https://terrestris.github.io/helm-charts
+      version: 3.0.0
+    - condition: geoserver.enabled
+      name: geoserver
+      repository: https://terrestris.github.io/helm-charts
+      version: 3.1.0
+    - condition: keycloak.enabled
+      name: keycloak
+      repository: https://charts.bitnami.com/bitnami
+      version: 21.1.2
+    - condition: shogun-boot.enabled
+      name: shogun-boot
+      repository: https://terrestris.github.io/helm-charts
+      version: 1.0.1
+    - condition: shogun-admin.enabled
+      name: shogun-admin
+      repository: https://terrestris.github.io/helm-charts
+      version: 1.0.0
+    - condition: shogun-client.enabled
+      name: shogun-client
+      repository: https://terrestris.github.io/helm-charts
+      version: 1.0.0
+    - condition: mapfish-print.enabled
+      name: mapfish-print
+      repository: https://terrestris.github.io/helm-charts
+      version: 2.0.3
+    - name: shogun-common
+      repository: https://terrestris.github.io/helm-charts
+      version: 1.0.0
+    description: A Helm chart for a complete installation of SHOGun
+    digest: 4d41c91853277357cc5ef49041985bb862d0e4325988ddc20991d6a0150785c7
+    icon: https://raw.githubusercontent.com/terrestris/shogun/main/shogun-boot/src/main/resources/public/assets/img/shogun_logo.png
+    name: shogun
+    type: application
+    urls:
+    - https://github.com/terrestris/helm-charts/releases/download/shogun-1.1.0/shogun-1.1.0.tgz
+    version: 1.1.0
+  - apiVersion: v2
     created: "2024-05-08T10:18:03.703285511Z"
     dependencies:
     - condition: postgis.enabled
@@ -813,6 +855,15 @@ entries:
   shogun-admin:
   - apiVersion: v2
     appVersion: 14.2.0
+    created: "2024-05-23T13:22:57.333537431Z"
+    description: Helm chart for SHOGun-Admin-Client
+    digest: ce0ed7a1bde6df615324c0acf0dc0a69e1f3b5a22e108f95942560fce9ff98ee
+    name: shogun-admin
+    urls:
+    - https://github.com/terrestris/helm-charts/releases/download/shogun-admin-1.0.1/shogun-admin-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
+    appVersion: 14.2.0
     created: "2024-05-06T12:47:03.777281809Z"
     description: Helm chart for SHOGun-Admin-Client
     digest: a309cfdaa6cfea326f5cadd84392713a5e70f9e3dd0cc982fe8c4a58aecb7535
@@ -861,4 +912,4 @@ entries:
     urls:
     - https://github.com/terrestris/helm-charts/releases/download/shogun-common-1.0.0/shogun-common-1.0.0.tgz
     version: 1.0.0
-generated: "2024-05-08T10:18:03.703386581Z"
+generated: "2024-05-23T13:22:57.333872887Z"
