@@ -44,8 +44,8 @@ environment:
   stableExtensions:
   communityExtensions:
     names: sec-keycloak
-    version: 2.24-SNAPSHOT
-    baseUrl: https://build.geoserver.org/geoserver/2.24.x/community-latest/
+    version: 2.25-SNAPSHOT
+    baseUrl: https://build.geoserver.org/geoserver/2.25.x/community-latest/
   # replace example.com with your host
   javaOptions: -Xms1g -Xmx2g -DGEOSERVER_CSRF_WHITELIST=localhost,example.com
 
