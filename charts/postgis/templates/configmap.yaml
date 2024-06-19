@@ -5,7 +5,7 @@ metadata:
 {{ include "postgis.labels" . | indent 4 }}
   name: {{ include "postgis.fullname" . }}
 data:
-  {{- with .Values.postgres.conf }}
+  {{- if .Values.postgres.conf }}
   postgresql.conf: |-
 {{ .Values.postgres.conf | indent 4 }}
   {{- end }}
