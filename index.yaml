@@ -347,6 +347,16 @@ entries:
   postgis:
   - apiVersion: v1
     appVersion: 16-3.4-alpine
+    created: "2024-06-20T07:48:36.748329169Z"
+    description: PostGIS Helm chart
+    digest: a996bff8254eeecf480dce2a47371d5c44d3e66a0255b333632e4ac720677d4f
+    icon: https://postgis.net/logos/postgis-logo.png
+    name: postgis
+    urls:
+    - https://github.com/terrestris/helm-charts/releases/download/postgis-3.0.1/postgis-3.0.1.tgz
+    version: 3.0.1
+  - apiVersion: v1
+    appVersion: 16-3.4-alpine
     created: "2024-05-06T12:47:03.638821348Z"
     description: PostGIS Helm chart
     digest: 5d694ec6a3e3e746c9d818c70bd217a0e47a748b062c3c01ff6b60cc736596df
@@ -974,4 +984,4 @@ entries:
     urls:
     - https://github.com/terrestris/helm-charts/releases/download/shogun-common-1.0.0/shogun-common-1.0.0.tgz
     version: 1.0.0
-generated: "2024-06-19T08:48:32.781491972Z"
+generated: "2024-06-20T07:48:36.748516378Z"
