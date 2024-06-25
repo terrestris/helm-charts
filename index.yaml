@@ -1039,6 +1039,15 @@ entries:
   shogun-boot:
   - apiVersion: v2
     appVersion: 20.3.0
+    created: "2024-06-25T12:37:20.56456963Z"
+    description: Helm chart for SHOGun-Boot
+    digest: 54cb4d46fd0fb5ff4d126549b76c83dab4c2577b54a82f436029ba7b94800d73
+    name: shogun-boot
+    urls:
+    - https://github.com/terrestris/helm-charts/releases/download/shogun-boot-1.2.0/shogun-boot-1.2.0.tgz
+    version: 1.2.0
+  - apiVersion: v2
+    appVersion: 20.3.0
     created: "2024-06-25T09:08:51.733924044Z"
     description: Helm chart for SHOGun-Boot
     digest: d3fb281df1a6f0316259237bf1bc26a585d3b92f1b5a70a6cffce1cb898dfea7
@@ -1095,4 +1104,4 @@ entries:
     urls:
     - https://github.com/terrestris/helm-charts/releases/download/shogun-common-1.0.0/shogun-common-1.0.0.tgz
     version: 1.0.0
-generated: "2024-06-25T11:22:57.568004191Z"
+generated: "2024-06-25T12:37:20.564714231Z"
