@@ -964,6 +964,15 @@ entries:
     version: 1.0.0
   shogun-client:
   - apiVersion: v2
+    appVersion: 8.4.0
+    created: "2024-06-25T08:56:21.750841656Z"
+    description: Helm chart for SHOGun-GIS-Client
+    digest: 1e4d6ec1f1b2f5296c865dbb8509b4a015e90863c0c13304bbbb6da6e3ecb4e8
+    name: shogun-client
+    urls:
+    - https://github.com/terrestris/helm-charts/releases/download/shogun-client-1.1.0/shogun-client-1.1.0.tgz
+    version: 1.1.0
+  - apiVersion: v2
     appVersion: 8.0.0
     created: "2024-05-06T12:47:04.03683818Z"
     description: Helm chart for SHOGun-GIS-Client
@@ -984,4 +993,4 @@ entries:
     urls:
     - https://github.com/terrestris/helm-charts/releases/download/shogun-common-1.0.0/shogun-common-1.0.0.tgz
     version: 1.0.0
-generated: "2024-06-20T07:48:36.748516378Z"
+generated: "2024-06-25T08:56:21.751007838Z"
