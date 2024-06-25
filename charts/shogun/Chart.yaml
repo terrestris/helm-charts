@@ -3,30 +3,30 @@ description: A Helm chart for a complete installation of SHOGun
 name: shogun
 type: application
 icon: https://raw.githubusercontent.com/terrestris/shogun/main/shogun-boot/src/main/resources/public/assets/img/shogun_logo.png
-version: 1.1.1
+version: 1.2.0
 dependencies:
   - name: postgis
-    version: "3.0.0"
+    version: "3.0.1"
     repository: "https://terrestris.github.io/helm-charts"
     condition: postgis.enabled
   - name: geoserver
-    version: "3.1.0"
+    version: "4.0.0"
     repository: "https://terrestris.github.io/helm-charts"
     condition: geoserver.enabled
   - name: keycloak
-    version: "21.1.2"
+    version: "21.4.1"
     repository: "https://charts.bitnami.com/bitnami"
     condition: keycloak.enabled
   - name: shogun-boot
-    version: "1.0.1"
+    version: "1.1.0"
     repository: "https://terrestris.github.io/helm-charts"
     condition: shogun-boot.enabled
   - name: shogun-admin
-    version: "1.0.1"
+    version: "1.1.0"
     repository: "https://terrestris.github.io/helm-charts"
     condition: shogun-admin.enabled
   - name: shogun-client
-    version: "1.0.0"
+    version: "1.1.0"
     repository: "https://terrestris.github.io/helm-charts"
     condition: shogun-client.enabled
   - name: mapfish-print
