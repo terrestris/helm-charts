@@ -139,3 +139,5 @@ keycloak:
 
 mapfish-print:
   enabled: true
+  storage:
+    printAppsUrl: https://nexus.terrestris.de/repository/raw-public/print-apps-shogun.tar.gz
