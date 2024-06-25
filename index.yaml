@@ -926,6 +926,15 @@ entries:
     version: 1.0.0
   shogun-admin:
   - apiVersion: v2
+    appVersion: 15.2.0
+    created: "2024-06-25T08:57:35.327683846Z"
+    description: Helm chart for SHOGun-Admin-Client
+    digest: 0b854b3ef72f36d2230d9d40ffdca5b795b8f28b8c631addf0f2ecdab2df14d2
+    name: shogun-admin
+    urls:
+    - https://github.com/terrestris/helm-charts/releases/download/shogun-admin-1.1.0/shogun-admin-1.1.0.tgz
+    version: 1.1.0
+  - apiVersion: v2
     appVersion: 14.2.0
     created: "2024-05-23T13:22:57.333537431Z"
     description: Helm chart for SHOGun-Admin-Client
@@ -993,4 +1002,4 @@ entries:
     urls:
     - https://github.com/terrestris/helm-charts/releases/download/shogun-common-1.0.0/shogun-common-1.0.0.tgz
     version: 1.0.0
-generated: "2024-06-25T08:56:21.751007838Z"
+generated: "2024-06-25T08:57:35.327866447Z"
