@@ -32,12 +32,12 @@ spec:
       initContainers:
         - name: check-db-ready
           image: {{ .Values.postgresInitImage }}
-          command: ['sh', '-c',
+          command: [ 'sh', '-c',
             'until pg_isready -h {{ include "shogun-common.database.host" . }} -p {{ .Values.postgres.port }};
-            do echo waiting for database; sleep 2; done;']
+            do echo waiting for database; sleep 2; done;' ]
         - name: check-db
           image: {{ .Values.postgresInitImage }}
-          command: ['sh', '-c', '/script/init.sh']
+          command: [ 'sh', '-c', '/script/init.sh' ]
           volumeMounts:
             - name: init
               mountPath: "/script"
@@ -88,16 +88,32 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
+          {{- if .Values.livenessProbe.enabled }}
           livenessProbe:
             httpGet:
-              path: /info/app
-              port: http
-            initialDelaySeconds: 60
+              path: {{ .Values.livenessProbe.path }}
+              port: {{ .Values.livenessProbe.port }}
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+          {{- end }}
+          {{- if .Values.readinessProbe.enabled }}
           readinessProbe:
             httpGet:
-              path: /info/app
-              port: http
-            initialDelaySeconds: 60
+              path: {{ .Values.readinessProbe.path }}
+              port: {{ .Values.readinessProbe.port }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+          {{- end }}
+          {{- if .Values.startupProbe.enabled }}
+          startupProbe:
+            httpGet:
+              path: {{ .Values.startupProbe.path }}
+              port: {{ .Values.startupProbe.port }}
+            initialDelaySeconds: {{ .Values.startupProbe.initialDelaySeconds }}
+            failureThreshold: {{ .Values.startupProbe.failureThreshold }}
+            periodSeconds: {{ .Values.startupProbe.periodSeconds }}
+          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:

@@ -2,4 +2,4 @@ apiVersion: v2
 appVersion: 20.3.0
 description: Helm chart for SHOGun-Boot
 name: shogun-boot
-version: 1.1.0
+version: 1.2.0

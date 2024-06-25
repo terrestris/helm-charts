@@ -144,3 +144,27 @@ persistence:
   size: 5Gi
   storageClassName: ""
   accessMode: ReadWriteOnce
+
+livenessProbe:
+  enabled: true
+  failureThreshold: 5
+  initialDelaySeconds: 60
+  path: /info/app
+  periodSeconds: 30
+  port: http
+  timeoutSeconds: 3
+
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 0
+  path: /info/app
+  port: http
+  timeoutSeconds: 1
+
+startupProbe:
+  enabled: true
+  failureThreshold: 60
+  initialDelaySeconds: 2
+  path: /info/app
+  periodSeconds: 10
+  port: http
