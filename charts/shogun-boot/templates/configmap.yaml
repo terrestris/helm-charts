@@ -129,9 +129,9 @@ data:
       admin-client-id: {{ .Values.keycloak.adminClientId }}
       realm: {{ .Values.keycloak.realm }}
       client-id: {{ .Values.keycloak.clientId }}
-      principal-attribute: preferred_username
-      disableHostnameVerification: false
-      internal-server-url: shogun-keycloak
+      principal-attribute:  {{ .Values.keycloak.principalAttribute }}
+      disableHostnameVerification:  {{ .Values.keycloak.disableHostnameVerification }}
+      internal-server-url: {{ .Values.keycloak.internalServerUrl }}
 
     controller:
       applications:
