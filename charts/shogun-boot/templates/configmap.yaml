@@ -115,7 +115,7 @@ data:
           resourceserver:
             jwt:
               issuer-uri: {{ .Values.keycloak.url }}/realms/{{ .Values.keycloak.realm }}
-              jwk-set-uri: {{ .Values.keycloak.url }}/realms/{{ .Values.keycloak.realm }}/protocol/openid-connect/certs
+              jwk-set-uri: http://{{ .Values.keycloak.internalServerUrl }}/auth/realms/{{ .Values.keycloak.realm }}/protocol/openid-connect/certs
       graphql:
         graphiql:
           enabled: {{ .Values.debug.graphiql }}
