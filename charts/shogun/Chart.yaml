@@ -7,10 +7,12 @@ version: 1.2.3
 dependencies:
   - name: postgis
     version: "3.0.1"
+#    repository: "file://../postgis/"
     repository: "https://terrestris.github.io/helm-charts"
     condition: postgis.enabled
   - name: geoserver
     version: "4.0.0"
+#    repository: "file://../geoserver/"
     repository: "https://terrestris.github.io/helm-charts"
     condition: geoserver.enabled
   - name: keycloak
@@ -19,22 +21,27 @@ dependencies:
     condition: keycloak.enabled
   - name: shogun-boot
     version: "1.2.1"
+#    repository: "file://../shogun-boot/"
     repository: "https://terrestris.github.io/helm-charts"
     condition: shogun-boot.enabled
   - name: shogun-admin
     version: "1.1.0"
+#    repository: "file://../shogun-admin/"
     repository: "https://terrestris.github.io/helm-charts"
     condition: shogun-admin.enabled
   - name: shogun-client
     version: "1.1.0"
+#    repository: "file://../shogun-client/"
     repository: "https://terrestris.github.io/helm-charts"
     condition: shogun-client.enabled
   - name: mapfish-print
     version: "2.0.3"
+#    repository: "file://../mapfish-print/"
     repository: "https://terrestris.github.io/helm-charts"
     condition: mapfish-print.enabled
   - name: shogun-common
     version: "1.0.0"
+#    repository: "file://../shogun-common/"
     repository: "https://terrestris.github.io/helm-charts"
   # Disabled for now
   # - name: gnos
