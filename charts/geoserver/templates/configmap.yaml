@@ -64,4 +64,20 @@ data:
       eval $CMD
       echo "Successfully installed community modules to '{{ .Values.storage.additionalLibsDir }}'!"
     fi
+  {{- if .Values.geofence.enableInitScript }}
+  init-geofence.sh: |-
+    #!/bin/sh
+    echo "Initialising geofence config in /opt/geoserver_data/geofence/geofence-datasource-ovr.properties"
+    mkdir -p /opt/geoserver_data/geofence
+    cat > /opt/geoserver_data/geofence/geofence-datasource-ovr.properties << EOL
+    geofenceVendorAdapter.databasePlatform=org.hibernatespatial.postgis.PostgisDialect
+    geofenceDataSource.driverClassName=org.postgresql.Driver
+    geofenceDataSource.url={{ .Values.geofence.dataSourceUrl }}
+    geofenceDataSource.username=${GEOFENCE_DB_USER}
+    geofenceDataSource.password=${GEOFENCE_DB_PASSWORD}
+    geofenceEntityManagerFactory.jpaPropertyMap[hibernate.default_schema]=public
+    geofenceEntityManagerFactory.jpaPropertyMap[hibernate.hbm2ddl.auto]=update
+    EOL
+  {{- end}}
+
 {{- end}}

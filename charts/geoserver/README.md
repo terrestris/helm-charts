@@ -15,3 +15,6 @@ The following parameters can be configured in (a custom) `values.yaml`:
 * `persistence.size`: Size of pvc (persistent volume claim)
 * `persistence.useExisting`: Should an existing pvc (persistent volume claim) be used, default: `false`
 * `persistence.existingPvcName`: The name of an existing pvc (persistent volume claim) that should be used to store geoserver data
+* `geofence.enableInitScript`: A flag to control whether a init script for geofence should run or not. default: `false`.
+* `geofence.dataSourceUrl`: This will only be used if `geofence.enableInitScript` is `true`. Have a look at the `values.yaml` for an example value.
+* `geofence.env`: This will only be used if `geofence.enableInitScript` is `true`. Have a look at the `values.yaml` for an example value.

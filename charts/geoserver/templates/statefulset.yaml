@@ -25,6 +25,23 @@ spec:
       initContainers:
       {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- if .Values.geofence.enableInitScript }}
+      {{- if not .Values.initContainers }}
+      initContainers:
+      {{- end }}
+        - name: init-geofence
+          image: docker.terrestris.de/alpine
+          command: [ "/bin/sh","/mnt/init-geofence.sh" ]
+          volumeMounts:
+            - name: init-geofence-volume
+              mountPath: /mnt/
+            - name: datadir
+              mountPath: /opt/geoserver_data
+          env:
+          {{- with .Values.geofence.env }}
+          {{- tpl . $ | nindent 12 }}
+          {{- end }}
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -105,4 +122,12 @@ spec:
         {{- end }}
         {{- if .Values.extraVolumes }}
         {{- toYaml .Values.extraVolumes | nindent 8 }}
+        {{- end }}
+        {{- if .Values.geofence.enableInitScript }}
+        - name: init-geofence-volume
+          configMap:
+            name: geoserver-init-configmap
+            items:
+              - key: init-geofence.sh
+                path: init-geofence.sh
         {{- end }}
