@@ -2,8 +2,11 @@
 Create the name of the database host to use
 */}}
 {{- define "shogun-common.database.host" -}}
-{{- $name := default "postgis" .Values.postgres.host }}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
+{{- if .Values.postgres.host }}
+{{- .Values.postgres.host }}
+{{- else }}
+{{- printf "%s-postgis" .Release.Name | trunc 63 | trimSuffix "-" }}
+{{- end }}
 {{- end }}
 
 {{- define "shogun-common.database.shogun.credentialsSecret" -}}
