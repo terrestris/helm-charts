@@ -125,6 +125,18 @@ probes:
     periodSeconds: 10
     url: /geoserver/web/wicket/resource/org.geoserver.web.GeoServerBasePage/img/logo.png
 
+geofence:
+  enableInitScript: false
+  dataSourceUrl: jdbc:postgresql://shogun-postgis:5432/geofence
+  env: |
+    - name: GEOFENCE_DB_USER
+      value: shogun
+    - name: GEOFENCE_DB_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: shogun-postgis-shogun-credentials
+          key: shogun-password
+
 # extraEnv: |
 #   - name: QUERY_LAYER_MAX_FEATURES
 #     value: 100000
