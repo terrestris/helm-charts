@@ -25,10 +25,11 @@ spec:
       initContainers:
       {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if .Values.geofence.enableInitScript }}
-      {{- if not .Values.initContainers }}
+      {{- if and (not .Values.initContainers) (or (.Values.geofence.enableInitScript) (.Values.monitoring.enableInitScript)) }}
+      # only add this if we do not have initContainers, but at least one extension init script
       initContainers:
       {{- end }}
+      {{- if .Values.geofence.enableInitScript }}
         - name: init-geofence
           image: docker.terrestris.de/alpine
           command: [ "/bin/sh","/mnt/init-geofence.sh" ]
@@ -36,11 +37,21 @@ spec:
             - name: init-geofence-volume
               mountPath: /mnt/
             - name: datadir
-              mountPath: /opt/geoserver_data
+              mountPath: {{ .Values.storage.dataDir }}
           env:
           {{- with .Values.geofence.env }}
           {{- tpl . $ | nindent 12 }}
           {{- end }}
+      {{- end }}
+      {{- if .Values.monitoring.enableInitScript }}
+        - name: init-monitoring
+          image: docker.terrestris.de/alpine
+          command: [ "/bin/sh","/mnt/init-monitoring.sh" ]
+          volumeMounts:
+            - name: init-monitoring-volume
+              mountPath: /mnt/
+            - name: datadir
+              mountPath: {{ .Values.storage.dataDir }}
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
@@ -130,4 +141,16 @@ spec:
             items:
               - key: init-geofence.sh
                 path: init-geofence.sh
+        {{- end }}
+        {{- if .Values.monitoring.enableInitScript }}
+        - name: init-monitoring-volume
+          configMap:
+            name: geoserver-init-configmap
+            items:
+              - key: init-monitoring.sh
+                path: init-monitoring.sh
+              - key: filter.properties
+                path: filter.properties
+              - key: monitor.properties
+                path: monitor.properties
         {{- end }}

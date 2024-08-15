@@ -67,9 +67,9 @@ data:
   {{- if .Values.geofence.enableInitScript }}
   init-geofence.sh: |-
     #!/bin/sh
-    echo "Initialising geofence config in /opt/geoserver_data/geofence/geofence-datasource-ovr.properties"
-    mkdir -p /opt/geoserver_data/geofence
-    cat > /opt/geoserver_data/geofence/geofence-datasource-ovr.properties << EOL
+    echo "Initializing geofence config in {{ .Values.storage.dataDir }}/geofence/geofence-datasource-ovr.properties"
+    mkdir -p {{ .Values.storage.dataDir }}/geofence
+    cat > {{ .Values.storage.dataDir }}/geofence/geofence-datasource-ovr.properties << EOL
     geofenceVendorAdapter.databasePlatform=org.hibernatespatial.postgis.PostgisDialect
     geofenceDataSource.driverClassName=org.postgresql.Driver
     geofenceDataSource.url={{ .Values.geofence.dataSourceUrl }}
@@ -78,6 +78,14 @@ data:
     geofenceEntityManagerFactory.jpaPropertyMap[hibernate.default_schema]=public
     geofenceEntityManagerFactory.jpaPropertyMap[hibernate.hbm2ddl.auto]=update
     EOL
+  {{- end}}
+  {{- if .Values.monitoring.enableInitScript }}
+  init-monitoring.sh: |-
+    #!/bin/sh
+    echo "Initializing monitoring config by copying properties files to {{ .Values.storage.dataDir }}/monitoring"
+    mkdir -p {{ .Values.storage.dataDir }}/monitoring && cp /mnt/{filter,monitor}.properties {{ .Values.storage.dataDir }}/monitoring/
+  filter.properties: {{ .Values.monitoring.filterProperties | toYaml | indent 2 }}
+  monitor.properties: {{ .Values.monitoring.monitorProperties | toYaml | indent 2 }}
   {{- end}}
 
 {{- end}}

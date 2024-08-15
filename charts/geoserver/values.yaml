@@ -137,6 +137,21 @@ geofence:
           name: shogun-postgis-shogun-credentials
           key: shogun-password
 
+monitoring:
+  enableInitScript: false
+  filterProperties: |-
+    /rest/monitor/**
+    /web
+    /web/**
+    /pdf/**
+  monitorProperties: |-
+    storage=memory
+    mode=history
+    sync=async
+    maxBodySize=1024
+    bboxLogCrs=EPSG:4326
+    bboxLogLevel=no_wfs
+
 # extraEnv: |
 #   - name: QUERY_LAYER_MAX_FEATURES
 #     value: 100000
