@@ -83,7 +83,7 @@ data:
   init-monitoring.sh: |-
     #!/bin/sh
     echo "Initializing monitoring config by copying properties files to {{ .Values.storage.dataDir }}/monitoring"
-    mkdir -p {{ .Values.storage.dataDir }}/monitoring && cp /mnt/{filter,monitor}.properties {{ .Values.storage.dataDir }}/monitoring/
+    mkdir -p {{ .Values.storage.dataDir }}/monitoring && cp /mnt/*.properties {{ .Values.storage.dataDir }}/monitoring/
   filter.properties: {{ .Values.monitoring.filterProperties | toYaml | indent 2 }}
   monitor.properties: {{ .Values.monitoring.monitorProperties | toYaml | indent 2 }}
   {{- end}}
