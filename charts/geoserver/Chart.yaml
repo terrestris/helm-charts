@@ -2,5 +2,5 @@ apiVersion: v2
 name: geoserver
 description: Helm chart for GeoServer
 icon: https://geoserver.org/img/uploads/geoserver_icon.png
-version: 4.1.0
+version: 4.2.0
 appVersion: 2.25.2
