@@ -1386,6 +1386,17 @@ entries:
   shogun-common:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2024-08-19T14:31:37.391762715Z"
+    description: Helm chart containing common utils (template functions) for SHOGun
+      helm
+    digest: 5ed71aac788ea1d5477c93f95f9ec7d2209bb42580283366771a19b9fcacec46
+    name: shogun-common
+    type: library
+    urls:
+    - https://github.com/terrestris/helm-charts/releases/download/shogun-common-1.0.1/shogun-common-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2024-05-06T12:47:04.157627311Z"
     description: Helm chart containing common utils (template functions) for SHOGun
       helm
@@ -1395,4 +1406,4 @@ entries:
     urls:
     - https://github.com/terrestris/helm-charts/releases/download/shogun-common-1.0.0/shogun-common-1.0.0.tgz
     version: 1.0.0
-generated: "2024-08-16T14:27:07.642115748Z"
+generated: "2024-08-19T14:31:37.391916793Z"
