@@ -202,6 +202,15 @@ entries:
     version: 0.1.1
   mapfish-print:
   - apiVersion: v2
+    appVersion: 3.30.11
+    created: "2024-10-11T11:24:17.076412722Z"
+    description: Helm chart for MapFish Print v3
+    digest: 7b296a8d496e862e1923fce75470c4dd58d5657093242becca347852656e1b4b
+    name: mapfish-print
+    urls:
+    - https://github.com/terrestris/helm-charts/releases/download/mapfish-print-3.0.0/mapfish-print-3.0.0.tgz
+    version: 3.0.0
+  - apiVersion: v2
     appVersion: 3.30.5
     created: "2024-05-07T11:42:42.116427032Z"
     description: Helm chart for MapFish Print v3
@@ -1458,4 +1467,4 @@ entries:
     urls:
     - https://github.com/terrestris/helm-charts/releases/download/shogun-common-1.0.0/shogun-common-1.0.0.tgz
     version: 1.0.0
-generated: "2024-10-11T11:12:54.617353453Z"
+generated: "2024-10-11T11:24:17.076636272Z"
