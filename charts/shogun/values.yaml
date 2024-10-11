@@ -79,13 +79,12 @@ geoserver:
   enabled: true
   ingress:
     enabled: true
-    annotations:
-      spec.ingressClassName: nginx
-      # kubernetes.io/tls-acme: "true"
-      nginx.ingress.kubernetes.io/enable-cors: "true"
+    className: ""
     hosts:
       - host: shogun.local
-        paths: [ "/geoserver" ]
+        paths:
+          - path: /geoserver
+            pathType: ImplementationSpecific
     tls: []
       # - secretName: geoserver-secret
       #   hosts:
