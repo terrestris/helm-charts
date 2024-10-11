@@ -596,6 +596,48 @@ entries:
     version: 0.1.3
   shogun:
   - apiVersion: v2
+    created: "2024-10-11T12:12:05.817024198Z"
+    dependencies:
+    - condition: postgis.enabled
+      name: postgis
+      repository: https://terrestris.github.io/helm-charts
+      version: 3.0.1
+    - condition: geoserver.enabled
+      name: geoserver
+      repository: https://terrestris.github.io/helm-charts
+      version: 5.0.0
+    - condition: keycloak.enabled
+      name: keycloak
+      repository: https://charts.bitnami.com/bitnami
+      version: 21.4.1
+    - condition: shogun-boot.enabled
+      name: shogun-boot
+      repository: https://terrestris.github.io/helm-charts
+      version: 1.2.1
+    - condition: shogun-admin.enabled
+      name: shogun-admin
+      repository: https://terrestris.github.io/helm-charts
+      version: 1.1.0
+    - condition: shogun-client.enabled
+      name: shogun-client
+      repository: https://terrestris.github.io/helm-charts
+      version: 1.1.0
+    - condition: mapfish-print.enabled
+      name: mapfish-print
+      repository: https://terrestris.github.io/helm-charts
+      version: 3.0.0
+    - name: shogun-common
+      repository: https://terrestris.github.io/helm-charts
+      version: 1.0.1
+    description: A Helm chart for a complete installation of SHOGun
+    digest: 1a3ca5f9453b3c0853718497b20aa56e6cbe3eb21468a555dbe01790308087b6
+    icon: https://raw.githubusercontent.com/terrestris/shogun/main/shogun-boot/src/main/resources/public/assets/img/shogun_logo.png
+    name: shogun
+    type: application
+    urls:
+    - https://github.com/terrestris/helm-charts/releases/download/shogun-2.0.0/shogun-2.0.0.tgz
+    version: 2.0.0
+  - apiVersion: v2
     created: "2024-08-19T14:35:13.452041779Z"
     dependencies:
     - condition: postgis.enabled
@@ -1467,4 +1509,4 @@ entries:
     urls:
     - https://github.com/terrestris/helm-charts/releases/download/shogun-common-1.0.0/shogun-common-1.0.0.tgz
     version: 1.0.0
-generated: "2024-10-11T11:24:17.076636272Z"
+generated: "2024-10-11T12:12:05.817229019Z"
