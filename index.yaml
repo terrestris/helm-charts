@@ -3,6 +3,16 @@ entries:
   geoserver:
   - apiVersion: v2
     appVersion: 2.26.0
+    created: "2024-10-15T14:07:03.632536299Z"
+    description: Helm chart for GeoServer
+    digest: d00a082ac87ce0c90b6c901d66cb1b3c6bbf7ce8954535d6342a8ab126395772
+    icon: https://geoserver.org/img/uploads/geoserver_icon.png
+    name: geoserver
+    urls:
+    - https://github.com/terrestris/helm-charts/releases/download/geoserver-6.0.0/geoserver-6.0.0.tgz
+    version: 6.0.0
+  - apiVersion: v2
+    appVersion: 2.26.0
     created: "2024-10-11T11:12:54.617062042Z"
     description: Helm chart for GeoServer
     digest: 4f2c4d3d0127e63c1dff3bd8e5cfa47dae6f73bf1bf3f2bb2af3063365c7f597
@@ -1509,4 +1519,4 @@ entries:
     urls:
     - https://github.com/terrestris/helm-charts/releases/download/shogun-common-1.0.0/shogun-common-1.0.0.tgz
     version: 1.0.0
-generated: "2024-10-11T12:12:05.817229019Z"
+generated: "2024-10-15T14:07:03.632807726Z"
