@@ -129,7 +129,9 @@ probes:
 
 geofence:
   enableInitScript: false
-  dataSourceUrl: jdbc:postgresql://shogun-postgis:5432/geofence
+  databaseHost: shogun-postgis
+  databasePort: 5432
+  databaseName: geofence
   env: |
     - name: GEOFENCE_DB_USER
       value: shogun
