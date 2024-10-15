@@ -72,12 +72,16 @@ data:
     cat > {{ .Values.storage.dataDir }}/geofence/geofence-datasource-ovr.properties << EOL
     geofenceVendorAdapter.databasePlatform=org.hibernatespatial.postgis.PostgisDialect
     geofenceDataSource.driverClassName=org.postgresql.Driver
-    geofenceDataSource.url={{ .Values.geofence.dataSourceUrl }}
+    geofenceDataSource.url=jdbc:postgresql://{{ .Values.geofence.databaseHost }}:{{ .Values.geofence.databasePort }}/{{ .Values.geofence.databaseName }}
     geofenceDataSource.username=${GEOFENCE_DB_USER}
     geofenceDataSource.password=${GEOFENCE_DB_PASSWORD}
     geofenceEntityManagerFactory.jpaPropertyMap[hibernate.default_schema]=public
     geofenceEntityManagerFactory.jpaPropertyMap[hibernate.hbm2ddl.auto]=update
     EOL
+    until pg_isready -h '{{ .Values.geofence.databaseHost }}' -p {{ .Values.geofence.databasePort }};
+            do echo waiting for database; sleep 2; done;
+    echo "Creating geofence database now (if it does not yet exist)"
+    echo "SELECT 'CREATE DATABASE {{ .Values.geofence.databaseName }}' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '{{ .Values.geofence.databaseName }}')\gexec" | PGPASSWORD="${GEOFENCE_DB_PASSWORD}" psql -h '{{ .Values.geofence.databaseHost }}' -p {{ .Values.geofence.databasePort }} -U ${GEOFENCE_DB_USER}
   {{- end}}
   {{- if .Values.monitoring.enableInitScript }}
   init-monitoring.sh: |-

@@ -16,7 +16,9 @@ The following parameters can be configured in (a custom) `values.yaml`:
 * `persistence.useExisting`: Should an existing pvc (persistent volume claim) be used, default: `false`
 * `persistence.existingPvcName`: The name of an existing pvc (persistent volume claim) that should be used to store geoserver data
 * `geofence.enableInitScript`: A flag to control whether a init script for geofence should run or not. default: `false`.
-* `geofence.dataSourceUrl`: This will only be used if `geofence.enableInitScript` is `true`. Have a look at the `values.yaml` for an example value.
+* `geofence.databaseHost`: This will only be used if `geofence.enableInitScript` is `true`. The host of a postgis database. default: `shogun-postgis`
+* `geofence.databasePort`: This will only be used if `geofence.enableInitScript` is `true`. The port of a postgis database. default: `5432`
+* `geofence.databaseName`: This will only be used if `geofence.enableInitScript` is `true`. The name of the database in the postgis database. default: `geofence`
 * `geofence.env`: This will only be used if `geofence.enableInitScript` is `true`. Have a look at the `values.yaml` for an example value.
 * `monitoring.enableInitScript`: A flag to control whether a init script for the gs monitoring extension should run or not. default: `false`.
 * `monitoring.filterProperties`: The file content of the [filter.properties](https://docs.geoserver.org/stable/en/user/extensions/monitoring/configuration.html) used by the monitoring extension. This will only be used if `monitoring.enableInitScript` is `true`. default: see `values.yaml`
